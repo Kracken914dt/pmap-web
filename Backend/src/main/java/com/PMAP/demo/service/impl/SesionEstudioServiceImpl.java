@@ -14,10 +14,12 @@ import com.PMAP.demo.repository.SesionEstudioRepository;
 import com.PMAP.demo.repository.UsuarioRepository;
 import com.PMAP.demo.service.SesionEstudioService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@Transactional
 public class SesionEstudioServiceImpl implements SesionEstudioService {
 
     private final SesionEstudioRepository sesionEstudioRepository;

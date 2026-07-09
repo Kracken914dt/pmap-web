@@ -1,12 +1,12 @@
 import { NavLink } from 'react-router-dom';
-import { BookOpen, CalendarClock, LayoutDashboard, UserCircle2 } from 'lucide-react';
+import { BookOpen, CalendarRange, LayoutDashboard, UserCircle, Users } from 'lucide-react';
 
 const items = [
-  { to: '/', label: 'Dashboard', icon: LayoutDashboard },
-  { to: '/usuarios', label: 'Usuarios', icon: BookOpen },
-  { to: '/materias', label: 'Materias', icon: CalendarClock },
-  { to: '/sesiones', label: 'Sesiones', icon: UserCircle2 },
-  { to: '/perfil', label: 'Perfil', icon: UserCircle2 }
+  { to: '/', label: 'Tablero Principal', icon: LayoutDashboard },
+  { to: '/usuarios', label: 'Usuarios', icon: Users },
+  { to: '/materias', label: 'Materias', icon: BookOpen },
+  { to: '/sesiones', label: 'Sesiones de Estudio', icon: CalendarRange },
+  { to: '/perfil', label: 'Mi Perfil', icon: UserCircle }
 ];
 
 export default function Sidebar() {
@@ -33,4 +33,4 @@ export default function Sidebar() {
       </nav>
     </aside>
   );
-}
+}
