@@ -1,0 +1,24 @@
+# Backend
+Backend/target/
+Backend/.mvn/wrapper/maven-wrapper.jar
+Backend/.vscode/
+Backend/.classpath
+Backend/.factorypath
+Backend/.project
+Backend/.settings/
+Backend/.springBeans
+Backend/.sts4-cache/
+Backend/build/
+
+# Frontend
+Frontend/node_modules/
+Frontend/dist/
+Frontend/.vite/
+Frontend/coverage/
+Frontend/.env
+Frontend/.env.*
+
+# Logs and temporary files
+*.log
+*.tmp
+*.temp
