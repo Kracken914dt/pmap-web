@@ -55,6 +55,21 @@ function formatDateForDisplay(dateVal) {
   return '';
 }
 
+function FormErrorTooltip({ error }) {
+  if (!error) return null;
+  return (
+    <div className="relative mt-2 z-10 flex items-start gap-2.5 rounded-xl border border-slate-200 bg-white p-3 text-xs text-slate-800 shadow-xl animate-fade-in">
+      <div className="absolute -top-1.5 left-6 h-3 w-3 rotate-45 border-l border-t border-slate-200 bg-white" />
+      <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded bg-amber-600 text-white font-bold select-none text-[11px]">
+        !
+      </span>
+      <div className="flex-1 text-left leading-relaxed font-medium">
+        {error.message || 'Dato inválido'}
+      </div>
+    </div>
+  );
+}
+
 export default function SesionesPage() {
   const [sesiones, setSesiones] = useState([]);
   const [usuarios, setUsuarios] = useState([]);
@@ -71,7 +86,7 @@ export default function SesionesPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingSesion, setEditingSesion] = useState(null);
 
-  const { register, handleSubmit, reset } = useForm();
+  const { register, handleSubmit, reset, formState: { errors } } = useForm();
 
   // Load all required data
   async function loadData() {
@@ -410,7 +425,7 @@ export default function SesionesPage() {
                   Estudiante
                 </label>
                 <select
-                  {...register('usuarioId', { required: true })}
+                  {...register('usuarioId', { required: 'Por favor, selecciona un estudiante.' })}
                   className="w-full rounded-xl border border-white/10 bg-slate-900 px-4 py-2.5 text-white outline-none focus:border-midnight-500 transition"
                 >
                   <option value="">Selecciona un estudiante...</option>
@@ -418,6 +433,7 @@ export default function SesionesPage() {
                     <option key={u.id} value={u.id}>{u.nombres} {u.apellidos} ({u.correo})</option>
                   ))}
                 </select>
+                <FormErrorTooltip error={errors.usuarioId} />
               </div>
 
               <div>
@@ -425,7 +441,7 @@ export default function SesionesPage() {
                   Materia / Asignatura
                 </label>
                 <select
-                  {...register('materiaId', { required: true })}
+                  {...register('materiaId', { required: 'Por favor, selecciona una materia.' })}
                   className="w-full rounded-xl border border-white/10 bg-slate-900 px-4 py-2.5 text-white outline-none focus:border-midnight-500 transition"
                 >
                   <option value="">Selecciona una materia...</option>
@@ -433,6 +449,7 @@ export default function SesionesPage() {
                     <option key={m.id} value={m.id}>{m.nombre} - {m.categoria}</option>
                   ))}
                 </select>
+                <FormErrorTooltip error={errors.materiaId} />
               </div>
 
               <div className="grid gap-4 grid-cols-3">
@@ -442,9 +459,10 @@ export default function SesionesPage() {
                   </label>
                   <input
                     type="date"
-                    {...register('fecha', { required: true })}
+                    {...register('fecha', { required: 'Completa este campo.' })}
                     className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-white outline-none focus:border-midnight-500 transition"
                   />
+                  <FormErrorTooltip error={errors.fecha} />
                 </div>
                 <div>
                   <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">
@@ -452,9 +470,10 @@ export default function SesionesPage() {
                   </label>
                   <input
                     type="time"
-                    {...register('horaInicio', { required: true })}
+                    {...register('horaInicio', { required: 'Completa este campo.' })}
                     className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-white outline-none focus:border-midnight-500 transition"
                   />
+                  <FormErrorTooltip error={errors.horaInicio} />
                 </div>
                 <div>
                   <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">
@@ -462,9 +481,10 @@ export default function SesionesPage() {
                   </label>
                   <input
                     type="time"
-                    {...register('horaFin', { required: true })}
+                    {...register('horaFin', { required: 'Completa este campo.' })}
                     className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-white outline-none focus:border-midnight-500 transition"
                   />
+                  <FormErrorTooltip error={errors.horaFin} />
                 </div>
               </div>
 
@@ -473,11 +493,12 @@ export default function SesionesPage() {
                   Objetivo del Estudio
                 </label>
                 <textarea
-                  {...register('objetivo', { required: true })}
+                  {...register('objetivo', { required: 'Escribe un objetivo para la sesión de estudio.' })}
                   rows="3"
                   className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-white outline-none focus:border-midnight-500 focus:bg-white/10 transition resize-none"
                   placeholder="Ej. Repasar temas teóricos para examen final, resolver taller de integrales..."
                 />
+                <FormErrorTooltip error={errors.objetivo} />
               </div>
 
               <div>
@@ -485,7 +506,7 @@ export default function SesionesPage() {
                   Estado de la Sesión
                 </label>
                 <select
-                  {...register('estado', { required: true })}
+                  {...register('estado', { required: 'Selecciona un estado.' })}
                   className="w-full rounded-xl border border-white/10 bg-slate-900 px-4 py-2.5 text-white outline-none focus:border-midnight-500 transition"
                 >
                   <option value="PENDIENTE">PENDIENTE</option>
@@ -493,6 +514,7 @@ export default function SesionesPage() {
                   <option value="FINALIZADA">FINALIZADA</option>
                   <option value="CANCELADA">CANCELADA</option>
                 </select>
+                <FormErrorTooltip error={errors.estado} />
               </div>
 
               <div className="mt-6 flex justify-end gap-3 pt-4 border-t border-white/5">

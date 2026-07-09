@@ -4,16 +4,31 @@ import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import http from '../api/http';
 import { setAuthSession } from '../utils/storage';
-import { Sparkles, User, Shield } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
+
+function FormErrorTooltip({ error }) {
+  if (!error) return null;
+  return (
+    <div className="relative mt-2 z-10 flex items-start gap-2.5 rounded-xl border border-slate-200 bg-white p-3 text-xs text-slate-800 shadow-xl animate-fade-in">
+      {/* Pointer triangle */}
+      <div className="absolute -top-1.5 left-6 h-3 w-3 rotate-45 border-l border-t border-slate-200 bg-white" />
+      <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded bg-amber-600 text-white font-bold select-none text-[11px]">
+        !
+      </span>
+      <div className="flex-1 text-left leading-relaxed font-medium">
+        {error.message || 'Dato inválido'}
+      </div>
+    </div>
+  );
+}
 
 export default function LoginPage() {
   const navigate = useNavigate();
   const [isRegistering, setIsRegistering] = useState(false);
 
-  const { register, handleSubmit, reset, formState: { isSubmitting } } = useForm({
+  const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm({
     defaultValues: { correo: '', contraseña: '' }
   });
-
 
   async function onSubmit(values) {
     try {
@@ -82,8 +97,11 @@ export default function LoginPage() {
                   className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none focus:border-midnight-500 focus:bg-white/10 transition text-sm"
                   placeholder="Juan"
                   type="text"
-                  {...register('nombres', { required: isRegistering })}
+                  {...register('nombres', { 
+                    required: 'Incluye tus nombres. Este campo es obligatorio.' 
+                  })}
                 />
+                <FormErrorTooltip error={errors.nombres} />
               </div>
               <div>
                 <label className="block text-xs font-medium uppercase tracking-wider text-slate-400 mb-1.5">
@@ -93,8 +111,11 @@ export default function LoginPage() {
                   className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none focus:border-midnight-500 focus:bg-white/10 transition text-sm"
                   placeholder="Pérez"
                   type="text"
-                  {...register('apellidos', { required: isRegistering })}
+                  {...register('apellidos', { 
+                    required: 'Incluye tus apellidos. Este campo es obligatorio.' 
+                  })}
                 />
+                <FormErrorTooltip error={errors.apellidos} />
               </div>
             </div>
           )}
@@ -106,9 +127,16 @@ export default function LoginPage() {
             <input
               className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3.5 text-white outline-none placeholder:text-slate-600 focus:border-midnight-500 focus:bg-white/10 transition text-sm"
               placeholder="correo@ejemplo.com"
-              type="email"
-              {...register('correo', { required: true })}
+              type="text"
+              {...register('correo', { 
+                required: 'Introduce tu dirección de correo electrónico.',
+                pattern: {
+                  value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                  message: 'Incluye un signo "@" en la dirección de correo electrónico. La dirección no es válida.'
+                }
+              })}
             />
+            <FormErrorTooltip error={errors.correo} />
           </div>
 
           <div>
@@ -119,8 +147,15 @@ export default function LoginPage() {
               className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3.5 text-white outline-none placeholder:text-slate-600 focus:border-midnight-500 focus:bg-white/10 transition text-sm"
               placeholder="••••••••"
               type="password"
-              {...register('contraseña', { required: true, minLength: 6 })}
+              {...register('contraseña', { 
+                required: 'Introduce una contraseña para continuar.',
+                minLength: {
+                  value: 6,
+                  message: 'La contraseña es demasiado corta. Debe tener al menos 6 caracteres.'
+                }
+              })}
             />
+            <FormErrorTooltip error={errors.contraseña} />
           </div>
 
           {isRegistering && (
@@ -129,12 +164,13 @@ export default function LoginPage() {
                 Rol
               </label>
               <select
-                {...register('rol', { required: isRegistering })}
+                {...register('rol', { required: 'Por favor, selecciona un rol.' })}
                 className="w-full rounded-2xl border border-white/10 bg-slate-900 px-4 py-3 text-white outline-none focus:border-midnight-500 transition text-sm"
               >
                 <option value="ESTUDIANTE">ESTUDIANTE</option>
                 <option value="ADMINISTRADOR">ADMINISTRADOR</option>
               </select>
+              <FormErrorTooltip error={errors.rol} />
             </div>
           )}
 
@@ -163,4 +199,3 @@ export default function LoginPage() {
     </div>
   );
 }
-

@@ -30,6 +30,21 @@ function formatDateTime(dateTimeVal) {
   });
 }
 
+function FormErrorTooltip({ error }) {
+  if (!error) return null;
+  return (
+    <div className="relative mt-2 z-10 flex items-start gap-2.5 rounded-xl border border-slate-200 bg-white p-3 text-xs text-slate-800 shadow-xl animate-fade-in">
+      <div className="absolute -top-1.5 left-6 h-3 w-3 rotate-45 border-l border-t border-slate-200 bg-white" />
+      <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded bg-amber-600 text-white font-bold select-none text-[11px]">
+        !
+      </span>
+      <div className="flex-1 text-left leading-relaxed font-medium">
+        {error.message || 'Dato inválido'}
+      </div>
+    </div>
+  );
+}
+
 export default function MateriasPage() {
   const [materias, setMaterias] = useState([]);
   const [nombreSearch, setNombreSearch] = useState('');
@@ -41,7 +56,7 @@ export default function MateriasPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingMateria, setEditingMateria] = useState(null);
 
-  const { register, handleSubmit, reset } = useForm();
+  const { register, handleSubmit, reset, formState: { errors } } = useForm();
 
   // Load materias
   async function fetchMaterias(nameQuery = '', categoryQuery = '') {
@@ -355,10 +370,13 @@ export default function MateriasPage() {
                 </label>
                 <input
                   type="text"
-                  {...register('nombre', { required: true })}
+                  {...register('nombre', { 
+                    required: 'Completa este campo. Introduce el nombre de la materia.' 
+                  })}
                   className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-white outline-none focus:border-midnight-500 focus:bg-white/10 transition"
                   placeholder="Ej. Programación Avanzada, Cálculo II..."
                 />
+                <FormErrorTooltip error={errors.nombre} />
               </div>
 
               <div>
@@ -367,10 +385,13 @@ export default function MateriasPage() {
                 </label>
                 <input
                   type="text"
-                  {...register('categoria', { required: true })}
+                  {...register('categoria', { 
+                    required: 'Completa este campo. Introduce la categoría de la materia.' 
+                  })}
                   className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-white outline-none focus:border-midnight-500 focus:bg-white/10 transition"
                   placeholder="Ej. Tecnología, Ciencias, Idiomas, Humanidades..."
                 />
+                <FormErrorTooltip error={errors.categoria} />
               </div>
 
               <div>
@@ -378,11 +399,14 @@ export default function MateriasPage() {
                   Descripción
                 </label>
                 <textarea
-                  {...register('descripcion', { required: true })}
+                  {...register('descripcion', { 
+                    required: 'Completa este campo. Escribe una descripción de la materia.' 
+                  })}
                   rows="3"
                   className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-white outline-none focus:border-midnight-500 focus:bg-white/10 transition resize-none"
                   placeholder="Describe brevemente el contenido de esta materia..."
                 />
+                <FormErrorTooltip error={errors.descripcion} />
               </div>
 
               {editingMateria && (
@@ -391,12 +415,13 @@ export default function MateriasPage() {
                     Estado
                   </label>
                   <select
-                    {...register('estado', { required: true })}
+                    {...register('estado', { required: 'Selecciona un estado.' })}
                     className="w-full rounded-xl border border-white/10 bg-slate-900 px-4 py-2.5 text-white outline-none focus:border-midnight-500 transition"
                   >
                     <option value="ACTIVA">ACTIVA</option>
                     <option value="INACTIVA">INACTIVA</option>
                   </select>
+                  <FormErrorTooltip error={errors.estado} />
                 </div>
               )}
 

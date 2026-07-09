@@ -31,6 +31,21 @@ function formatDateTime(dateTimeVal) {
   });
 }
 
+function FormErrorTooltip({ error }) {
+  if (!error) return null;
+  return (
+    <div className="relative mt-2 z-10 flex items-start gap-2.5 rounded-xl border border-slate-200 bg-white p-3 text-xs text-slate-800 shadow-xl animate-fade-in">
+      <div className="absolute -top-1.5 left-6 h-3 w-3 rotate-45 border-l border-t border-slate-200 bg-white" />
+      <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded bg-amber-600 text-white font-bold select-none text-[11px]">
+        !
+      </span>
+      <div className="flex-1 text-left leading-relaxed font-medium">
+        {error.message || 'Dato inválido'}
+      </div>
+    </div>
+  );
+}
+
 export default function UsuariosPage() {
   const currentUser = getAuthUser();
   const [usuarios, setUsuarios] = useState([]);
@@ -41,7 +56,7 @@ export default function UsuariosPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
 
-  const { register, handleSubmit, reset, setValue } = useForm();
+  const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm();
 
   // Load users
   async function fetchUsuarios(query = '') {
@@ -330,9 +345,12 @@ export default function UsuariosPage() {
                   </label>
                   <input
                     type="text"
-                    {...register('nombres', { required: true })}
+                    {...register('nombres', { 
+                      required: 'Completa este campo. Introduce los nombres.' 
+                    })}
                     className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-white outline-none focus:border-midnight-500 focus:bg-white/10 transition"
                   />
+                  <FormErrorTooltip error={errors.nombres} />
                 </div>
                 <div>
                   <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">
@@ -340,9 +358,12 @@ export default function UsuariosPage() {
                   </label>
                   <input
                     type="text"
-                    {...register('apellidos', { required: true })}
+                    {...register('apellidos', { 
+                      required: 'Completa este campo. Introduce los apellidos.' 
+                    })}
                     className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-white outline-none focus:border-midnight-500 focus:bg-white/10 transition"
                   />
+                  <FormErrorTooltip error={errors.apellidos} />
                 </div>
               </div>
 
@@ -351,10 +372,17 @@ export default function UsuariosPage() {
                   Correo Electrónico
                 </label>
                 <input
-                  type="email"
-                  {...register('correo', { required: true })}
+                  type="text"
+                  {...register('correo', { 
+                    required: 'Introduce la dirección de correo electrónico.',
+                    pattern: {
+                      value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                      message: 'Incluye un signo "@" en la dirección de correo electrónico. La dirección no es válida.'
+                    }
+                  })}
                   className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-white outline-none focus:border-midnight-500 focus:bg-white/10 transition"
                 />
+                <FormErrorTooltip error={errors.correo} />
               </div>
 
               <div>
@@ -363,10 +391,17 @@ export default function UsuariosPage() {
                 </label>
                 <input
                   type="password"
-                  {...register('contraseña', { required: !editingUser })}
+                  {...register('contraseña', { 
+                    required: editingUser ? false : 'Introduce una contraseña para el nuevo usuario.',
+                    minLength: {
+                      value: 6,
+                      message: 'La contraseña debe tener al menos 6 caracteres.'
+                    }
+                  })}
                   placeholder={editingUser ? '••••••••' : ''}
                   className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-white outline-none focus:border-midnight-500 focus:bg-white/10 transition"
                 />
+                <FormErrorTooltip error={errors.contraseña} />
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2">
@@ -375,12 +410,13 @@ export default function UsuariosPage() {
                     Rol
                   </label>
                   <select
-                    {...register('rol', { required: true })}
+                    {...register('rol', { required: 'Selecciona un rol.' })}
                     className="w-full rounded-xl border border-white/10 bg-slate-900 px-4 py-2.5 text-white outline-none focus:border-midnight-500 transition"
                   >
                     <option value="ESTUDIANTE">ESTUDIANTE</option>
                     <option value="ADMINISTRADOR">ADMINISTRADOR</option>
                   </select>
+                  <FormErrorTooltip error={errors.rol} />
                 </div>
 
                 {editingUser && (
@@ -389,12 +425,13 @@ export default function UsuariosPage() {
                       Estado
                     </label>
                     <select
-                      {...register('estado', { required: true })}
+                      {...register('estado', { required: 'Selecciona un estado.' })}
                       className="w-full rounded-xl border border-white/10 bg-slate-900 px-4 py-2.5 text-white outline-none focus:border-midnight-500 transition"
                     >
                       <option value="ACTIVO">ACTIVO</option>
                       <option value="INACTIVO">INACTIVO</option>
                     </select>
+                    <FormErrorTooltip error={errors.estado} />
                   </div>
                 )}
               </div>
