@@ -4,6 +4,7 @@ import Swal from 'sweetalert2';
 import http from '../api/http';
 import Loader from '../components/Loader';
 import { Search, UserPlus, Edit2, Trash2, Shield, User, ToggleLeft, ToggleRight, X } from 'lucide-react';
+import { getAuthUser } from '../utils/storage';
 
 function formatDateTime(dateTimeVal) {
   if (!dateTimeVal) return '';
@@ -31,6 +32,7 @@ function formatDateTime(dateTimeVal) {
 }
 
 export default function UsuariosPage() {
+  const currentUser = getAuthUser();
   const [usuarios, setUsuarios] = useState([]);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
@@ -215,8 +217,13 @@ export default function UsuariosPage() {
                   usuarios.map((usuario) => (
                     <tr key={usuario.id} className="hover:bg-white/5 transition">
                       <td className="px-6 py-4">
-                        <div className="font-semibold text-white">
-                          {usuario.nombres} {usuario.apellidos}
+                        <div className="font-semibold text-white flex items-center gap-2">
+                          <span>{usuario.nombres} {usuario.apellidos}</span>
+                          {usuario.id === currentUser?.id && (
+                            <span className="inline-flex items-center rounded-md bg-midnight-500/20 px-2.5 py-0.5 text-xs font-semibold text-midnight-300">
+                              Yo
+                            </span>
+                          )}
                         </div>
                       </td>
                       <td className="px-6 py-4 text-slate-300">{usuario.correo}</td>
@@ -251,37 +258,43 @@ export default function UsuariosPage() {
                         {formatDateTime(usuario.fechaRegistro)}
                       </td>
                       <td className="px-6 py-4 text-right">
-                        <div className="flex items-center justify-end gap-2">
-                          <button
-                            onClick={() => handleToggleStatus(usuario)}
-                            title={usuario.estado === 'ACTIVO' ? 'Desactivar Usuario' : 'Activar Usuario'}
-                            className={`p-2 rounded-xl transition ${
-                              usuario.estado === 'ACTIVO'
-                                ? 'text-emerald-400 hover:bg-emerald-500/10'
-                                : 'text-rose-400 hover:bg-rose-500/10'
-                            }`}
-                          >
-                            {usuario.estado === 'ACTIVO' ? (
-                              <ToggleRight className="h-5 w-5" />
-                            ) : (
-                              <ToggleLeft className="h-5 w-5" />
-                            )}
-                          </button>
-                          <button
-                            onClick={() => handleEditOpen(usuario)}
-                            title="Editar Usuario"
-                            className="p-2 rounded-xl text-slate-300 hover:bg-white/10 hover:text-white transition"
-                          >
-                            <Edit2 className="h-4.5 w-4.5" />
-                          </button>
-                          <button
-                            onClick={() => handleDelete(usuario.id)}
-                            title="Eliminar Usuario"
-                            className="p-2 rounded-xl text-rose-400 hover:bg-rose-500/10 hover:text-rose-300 transition"
-                          >
-                            <Trash2 className="h-4.5 w-4.5" />
-                          </button>
-                        </div>
+                        {usuario.id !== currentUser?.id ? (
+                          <div className="flex items-center justify-end gap-2">
+                            <button
+                              onClick={() => handleToggleStatus(usuario)}
+                              title={usuario.estado === 'ACTIVO' ? 'Desactivar Usuario' : 'Activar Usuario'}
+                              className={`p-2 rounded-xl transition ${
+                                usuario.estado === 'ACTIVO'
+                                  ? 'text-emerald-400 hover:bg-emerald-500/10'
+                                  : 'text-rose-400 hover:bg-rose-500/10'
+                              }`}
+                            >
+                              {usuario.estado === 'ACTIVO' ? (
+                                <ToggleRight className="h-5 w-5" />
+                              ) : (
+                                <ToggleLeft className="h-5 w-5" />
+                              )}
+                            </button>
+                            <button
+                              onClick={() => handleEditOpen(usuario)}
+                              title="Editar Usuario"
+                              className="p-2 rounded-xl text-slate-300 hover:bg-white/10 hover:text-white transition"
+                            >
+                              <Edit2 className="h-4.5 w-4.5" />
+                            </button>
+                            <button
+                              onClick={() => handleDelete(usuario.id)}
+                              title="Eliminar Usuario"
+                              className="p-2 rounded-xl text-rose-400 hover:bg-rose-500/10 hover:text-rose-300 transition"
+                            >
+                              <Trash2 className="h-4.5 w-4.5" />
+                            </button>
+                          </div>
+                        ) : (
+                          <span className="text-xs text-slate-500 font-semibold uppercase tracking-wider pr-2 select-none">
+                            Sin Acciones
+                          </span>
+                        )}
                       </td>
                     </tr>
                   ))
