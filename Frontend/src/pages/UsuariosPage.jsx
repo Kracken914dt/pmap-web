@@ -234,6 +234,7 @@ export default function UsuariosPage() {
                       <td className="px-6 py-4">
                         <div className="font-semibold text-white flex items-center gap-2">
                           <span>{usuario.nombres} {usuario.apellidos}</span>
+                          {/* Etiqueta para identificar visualmente al usuario actual */}
                           {usuario.id === currentUser?.id && (
                             <span className="inline-flex items-center rounded-md bg-midnight-500/20 px-2.5 py-0.5 text-xs font-semibold text-midnight-300">
                               Yo
@@ -273,6 +274,7 @@ export default function UsuariosPage() {
                         {formatDateTime(usuario.fechaRegistro)}
                       </td>
                       <td className="px-6 py-4 text-right">
+                        {/* Evitar que el usuario activo realice acciones destructivas sobre sí mismo */}
                         {usuario.id !== currentUser?.id ? (
                           <div className="flex items-center justify-end gap-2">
                             <button

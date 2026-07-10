@@ -6,12 +6,15 @@ import http from '../api/http';
 import { setAuthSession } from '../utils/storage';
 import { Sparkles } from 'lucide-react';
 
+// Componente reutilizable para renderizar las burbujas de error de validación 
+// al estilo del tooltip nativo de Chrome/HTML5
 function FormErrorTooltip({ error }) {
   if (!error) return null;
   return (
     <div className="relative mt-2 z-10 flex items-start gap-2.5 rounded-xl border border-slate-200 bg-white p-3 text-xs text-slate-800 shadow-xl animate-fade-in">
-      {/* Pointer triangle */}
+      {/* Triángulo indicador del tooltip */}
       <div className="absolute -top-1.5 left-6 h-3 w-3 rotate-45 border-l border-t border-slate-200 bg-white" />
+      {/* Icono de advertencia naranja */}
       <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded bg-amber-600 text-white font-bold select-none text-[11px]">
         !
       </span>
@@ -21,6 +24,7 @@ function FormErrorTooltip({ error }) {
     </div>
   );
 }
+
 
 export default function LoginPage() {
   const navigate = useNavigate();

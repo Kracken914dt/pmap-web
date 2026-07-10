@@ -14,6 +14,8 @@ export default function DashboardPage() {
       let materiasCount = 0;
       let sesionesCount = 0;
 
+      // Peticiones HTTP aisladas en bloques try-catch separados para asegurar
+      // que si un endpoint falla, los demás contadores sigan cargando correctamente
       try {
         const res = await http.get('/usuarios');
         if (res.data && Array.isArray(res.data)) {

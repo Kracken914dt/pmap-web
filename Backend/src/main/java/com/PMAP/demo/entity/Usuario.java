@@ -53,6 +53,7 @@ public class Usuario {
     @Column(nullable = false, updatable = false)
     private LocalDateTime fechaRegistro;
 
+    // Relación bidireccional con borrado en cascada para evitar violaciones de integridad referencial al eliminar un usuario
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SesionEstudio> sesiones = new ArrayList<>();
 }

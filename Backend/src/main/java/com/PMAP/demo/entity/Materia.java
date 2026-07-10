@@ -46,6 +46,7 @@ public class Materia {
     @Column(nullable = false, updatable = false)
     private LocalDateTime fechaCreacion;
 
+    // Relación bidireccional con borrado en cascada para evitar violaciones de integridad referencial al eliminar una materia
     @OneToMany(mappedBy = "materia", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SesionEstudio> sesiones = new ArrayList<>();
 }
