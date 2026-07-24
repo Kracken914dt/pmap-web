@@ -1,0 +1,608 @@
+{
+  "info": {
+    "name": "PMAP API",
+    "description": "Colección de endpoints para la Plataforma de Aprendizaje PMAP\n\n## Variables de colección\n- `{{base_url}}`: `http://localhost:8080/api`\n- `{{token}}`: se asigna automáticamente al iniciar sesión (script en Tests de Login)\n\n## Flujo de uso\n1. Ejecutar **Login** o **Register** para obtener el token\n2. El resto de endpoints requieren el token (se envía automáticamente vía header Authorization)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080/api"
+    },
+    {
+      "key": "token",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Autenticación",
+      "description": "Endpoints públicos para registro e inicio de sesión",
+      "item": [
+        {
+          "name": "Registrar usuario",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombres\": \"Juan\",\n  \"apellidos\": \"Pérez\",\n  \"correo\": \"juan@pmap.com\",\n  \"contraseña\": \"Password123\",\n  \"rol\": \"ESTUDIANTE\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Iniciar sesión",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set('token', jsonData.token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"correo\": \"admin@pmap.com\",\n  \"contraseña\": \"Password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Usuarios",
+      "description": "CRUD completo y gestión de estado de usuarios",
+      "item": [
+        {
+          "name": "Listar todos",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/usuarios",
+              "host": ["{{base_url}}"],
+              "path": ["usuarios"]
+            }
+          }
+        },
+        {
+          "name": "Buscar por nombre/apellido/correo",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/usuarios?search=ana",
+              "host": ["{{base_url}}"],
+              "path": ["usuarios"],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "ana"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Obtener por ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/usuarios/1",
+              "host": ["{{base_url}}"],
+              "path": ["usuarios", "1"]
+            }
+          }
+        },
+        {
+          "name": "Crear usuario",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombres\": \"Nuevo\",\n  \"apellidos\": \"Usuario\",\n  \"correo\": \"nuevo@pmap.com\",\n  \"contraseña\": \"Password123\",\n  \"rol\": \"ESTUDIANTE\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/usuarios",
+              "host": ["{{base_url}}"],
+              "path": ["usuarios"]
+            }
+          }
+        },
+        {
+          "name": "Actualizar usuario",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombres\": \"Nuevo\",\n  \"apellidos\": \"Usuario Modificado\",\n  \"correo\": \"nuevo@pmap.com\",\n  \"contraseña\": \"\",\n  \"rol\": \"ADMINISTRADOR\",\n  \"estado\": \"ACTIVO\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/usuarios/{{id_usuario}}",
+              "host": ["{{base_url}}"],
+              "path": ["usuarios", "{{id_usuario}}"]
+            }
+          }
+        },
+        {
+          "name": "Activar usuario",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/usuarios/{{id_usuario}}/activate",
+              "host": ["{{base_url}}"],
+              "path": ["usuarios", "{{id_usuario}}", "activate"]
+            }
+          }
+        },
+        {
+          "name": "Desactivar usuario",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/usuarios/{{id_usuario}}/deactivate",
+              "host": ["{{base_url}}"],
+              "path": ["usuarios", "{{id_usuario}}", "deactivate"]
+            }
+          }
+        },
+        {
+          "name": "Eliminar usuario",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/usuarios/{{id_usuario}}",
+              "host": ["{{base_url}}"],
+              "path": ["usuarios", "{{id_usuario}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Materias",
+      "description": "CRUD completo y gestión de estado de materias",
+      "item": [
+        {
+          "name": "Listar todas",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/materias",
+              "host": ["{{base_url}}"],
+              "path": ["materias"]
+            }
+          }
+        },
+        {
+          "name": "Buscar por nombre",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/materias?nombre=Matemáticas",
+              "host": ["{{base_url}}"],
+              "path": ["materias"],
+              "query": [
+                {
+                  "key": "nombre",
+                  "value": "Matemáticas"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Filtrar por categoría",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/materias?categoria=Tecnología",
+              "host": ["{{base_url}}"],
+              "path": ["materias"],
+              "query": [
+                {
+                  "key": "categoria",
+                  "value": "Tecnología"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Obtener por ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/materias/1",
+              "host": ["{{base_url}}"],
+              "path": ["materias", "1"]
+            }
+          }
+        },
+        {
+          "name": "Crear materia",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Inteligencia Artificial\",\n  \"descripcion\": \"Fundamentos de IA y machine learning\",\n  \"categoria\": \"Tecnología\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/materias",
+              "host": ["{{base_url}}"],
+              "path": ["materias"]
+            }
+          }
+        },
+        {
+          "name": "Actualizar materia",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Inteligencia Artificial\",\n  \"descripcion\": \"Curso avanzado de IA, redes neuronales y deep learning\",\n  \"categoria\": \"Tecnología\",\n  \"estado\": \"ACTIVA\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/materias/{{id_materia}}",
+              "host": ["{{base_url}}"],
+              "path": ["materias", "{{id_materia}}"]
+            }
+          }
+        },
+        {
+          "name": "Activar materia",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/materias/{{id_materia}}/activate",
+              "host": ["{{base_url}}"],
+              "path": ["materias", "{{id_materia}}", "activate"]
+            }
+          }
+        },
+        {
+          "name": "Desactivar materia",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/materias/{{id_materia}}/deactivate",
+              "host": ["{{base_url}}"],
+              "path": ["materias", "{{id_materia}}", "deactivate"]
+            }
+          }
+        },
+        {
+          "name": "Eliminar materia",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/materias/{{id_materia}}",
+              "host": ["{{base_url}}"],
+              "path": ["materias", "{{id_materia}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Sesiones de Estudio",
+      "description": "CRUD completo y filtros de sesiones de estudio",
+      "item": [
+        {
+          "name": "Listar todas",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/sesiones",
+              "host": ["{{base_url}}"],
+              "path": ["sesiones"]
+            }
+          }
+        },
+        {
+          "name": "Filtrar por usuario",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/sesiones?usuarioId=1",
+              "host": ["{{base_url}}"],
+              "path": ["sesiones"],
+              "query": [
+                {
+                  "key": "usuarioId",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Filtrar por materia",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/sesiones?materiaId=1",
+              "host": ["{{base_url}}"],
+              "path": ["sesiones"],
+              "query": [
+                {
+                  "key": "materiaId",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Filtrar por estado",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/sesiones?estado=PENDIENTE",
+              "host": ["{{base_url}}"],
+              "path": ["sesiones"],
+              "query": [
+                {
+                  "key": "estado",
+                  "value": "PENDIENTE"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Obtener por ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/sesiones/1",
+              "host": ["{{base_url}}"],
+              "path": ["sesiones", "1"]
+            }
+          }
+        },
+        {
+          "name": "Crear sesión",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"usuarioId\": 1,\n  \"materiaId\": 1,\n  \"fecha\": \"2026-07-23\",\n  \"horaInicio\": \"08:00:00\",\n  \"horaFin\": \"10:00:00\",\n  \"objetivo\": \"Repasar temas teóricos para examen final\",\n  \"estado\": \"PENDIENTE\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/sesiones",
+              "host": ["{{base_url}}"],
+              "path": ["sesiones"]
+            }
+          }
+        },
+        {
+          "name": "Actualizar sesión",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"usuarioId\": 1,\n  \"materiaId\": 1,\n  \"fecha\": \"2026-07-23\",\n  \"horaInicio\": \"08:00:00\",\n  \"horaFin\": \"10:00:00\",\n  \"objetivo\": \"Repasar y practicar ejercicios\",\n  \"estado\": \"EN_PROGRESO\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/sesiones/{{id_sesion}}",
+              "host": ["{{base_url}}"],
+              "path": ["sesiones", "{{id_sesion}}"]
+            }
+          }
+        },
+        {
+          "name": "Eliminar sesión",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/sesiones/{{id_sesion}}",
+              "host": ["{{base_url}}"],
+              "path": ["sesiones", "{{id_sesion}}"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
