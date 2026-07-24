@@ -1,0 +1,158 @@
+@startuml
+!theme plain
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam monochrome false
+skinparam shadowing false
+
+skinparam package {
+  BorderColor #2E4057
+  FontColor #2E4057
+  BackgroundColor #F0F4F8
+}
+
+skinparam rectangle {
+  BorderColor #2E4057
+  FontColor #FFFFFF
+  BackgroundColor #2E4057
+  RoundCorner 8
+}
+
+skinparam component {
+  BorderColor #3A6EA5
+  FontColor #1A1A2E
+  BackgroundColor #D6E4F0
+  RoundCorner 6
+}
+
+skinparam database {
+  BorderColor #2D6A4F
+  FontColor #FFFFFF
+  BackgroundColor #2D6A4F
+}
+
+skinparam node {
+  BorderColor #6B4C3B
+  FontColor #FFFFFF
+  BackgroundColor #6B4C3B
+}
+
+skinparam arrow {
+  Color #555555
+  FontColor #555555
+}
+
+' ============================================================
+' DIAGRAMA DE ARQUITECTURA
+' ============================================================
+
+title Diagrama de Arquitectura - PMAP
+
+node "Cliente Web\n(Browser)" as client #6B4C3B {
+  rectangle "SPA React + Vite\nPuerto 5173" as frontend
+}
+
+node "Servidor Backend\nSpring Boot 3.3.5\nPuerto 8080" as server #3A6EA5 {
+  package "Capa de Presentación (API REST)" as api_layer {
+    component "AuthController\n/api/auth" as auth_ctrl
+    component "UsuarioController\n/api/usuarios" as user_ctrl
+    component "MateriaController\n/api/materias" as mat_ctrl
+    component "SesionEstudioController\n/api/sesiones" as ses_ctrl
+  }
+
+  package "Capa de Seguridad" as security_layer {
+    component "JwtAuthenticationFilter" as jwt_filter
+    component "JwtService" as jwt_svc
+    component "CustomUserDetailsService" as user_details
+    component "SecurityConfig\n(CSRF off, CORS, Stateless)" as sec_config
+  }
+
+  package "Capa de Servicio (Negocio)" as service_layer {
+    component "AuthServiceImpl" as auth_svc
+    component "UsuarioServiceImpl" as user_svc
+    component "MateriaServiceImpl" as mat_svc
+    component "SesionEstudioServiceImpl" as ses_svc
+  }
+
+  package "Capa de Persistencia" as persistence_layer {
+    component "UsuarioRepository\n(JPA Repository)" as user_repo
+    component "MateriaRepository\n(JPA Repository)" as mat_repo
+    component "SesionEstudioRepository\n(JPA Repository)" as ses_repo
+  }
+
+  package "Cross-Cutting" as cross {
+    component "GlobalExceptionHandler\n@RestControllerAdvice" as exc_handler
+    component "UsuarioMapper" as user_map
+    component "MateriaMapper" as mat_map
+    component "SesionEstudioMapper" as ses_map
+    component "DataSeeder\n(CommandLineRunner)" as seeder
+    component "OpenApiConfig\n(Swagger)" as swagger
+  }
+}
+
+database "PostgreSQL\npmap_db" as db #2D6A4F {
+  rectangle "usuarios" as tbl_user
+  rectangle "materias" as tbl_mat
+  rectangle "sesiones_estudio" as tbl_ses
+}
+
+' ====== FLUJO DE AUTENTICACIÓN ======
+client --> auth_ctrl : "POST /api/auth/login\nPOST /api/auth/register"
+auth_ctrl --> jwt_filter : "JWT validation"
+jwt_filter --> jwt_svc : "Extract/Validate token"
+jwt_svc --> user_details : "Load user"
+user_details --> user_repo : "findByCorreoIgnoreCase()"
+
+' ====== FLUJO DE PETICIONES PROTEGIDAS ======
+client --> jwt_filter : "Bearer Token"
+jwt_filter --> sec_config : "Security context"
+sec_config --> user_ctrl : "Authorized requests"
+sec_config --> mat_ctrl
+sec_config --> ses_ctrl
+
+' ====== CONTROLADORES -> SERVICIOS ======
+auth_ctrl --> auth_svc : "register() / login()"
+user_ctrl --> user_svc : "CRUD operations"
+mat_ctrl --> mat_svc : "CRUD operations"
+ses_ctrl --> ses_svc : "CRUD operations"
+
+' ====== SERVICIOS -> REPOSITORIOS ======
+auth_svc --> user_repo : "save() / findByCorreo()"
+user_svc --> user_repo : "CRUD"
+mat_svc --> mat_repo : "CRUD"
+ses_svc --> ses_repo : "CRUD"
+ses_svc --> user_repo : "findById()"
+ses_svc --> mat_repo : "findById()"
+
+' ====== SERVICIOS -> MAPPER ======
+auth_svc --> user_map : "toResponse()"
+user_svc --> user_map : "toResponse()"
+mat_svc --> mat_map : "toResponse()"
+ses_svc --> ses_map : "toResponse()"
+ses_map --> user_map : "reuse"
+ses_map --> mat_map : "reuse"
+
+' ====== CONTROLADORES -> EXCEPTION HANDLER ======
+user_ctrl --> exc_handler : "Exceptions"
+mat_ctrl --> exc_handler
+ses_ctrl --> exc_handler
+auth_ctrl --> exc_handler
+
+' ====== REPOSITORIOS -> DB ======
+user_repo --> db : "JPA/Hibernate"
+mat_repo --> db : "JPA/Hibernate"
+ses_repo --> db : "JPA/Hibernate"
+
+' ====== SEEDER -> DB ======
+seeder --> user_repo : "Seed 10 users"
+seeder --> mat_repo : "Seed 10 subjects"
+
+' ====== SWAGGER ======
+client --> swagger : "GET /swagger-ui.html"
+swagger --> api_layer : "OpenAPI docs"
+
+' ====== RELACIONES ENTRE TABLAS ======
+tbl_user --> tbl_ses : "1 --- *"
+tbl_mat --> tbl_ses : "1 --- *"
+
+@enduml
