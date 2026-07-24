@@ -1,3 +1,4 @@
+// Servicio de autenticación: encapsula las peticiones de login y registro
 import http from '../api/http';
 
 export const authService = {

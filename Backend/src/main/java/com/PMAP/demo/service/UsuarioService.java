@@ -1,3 +1,5 @@
+// Interfaz del servicio de usuarios
+// Define las operaciones CRUD, búsqueda y cambio de estado
 package com.PMAP.demo.service;
 
 import com.PMAP.demo.dto.usuario.UsuarioCreateRequest;

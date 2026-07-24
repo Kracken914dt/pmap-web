@@ -1,3 +1,4 @@
+// Controlador REST para autenticación (login y registro)
 package com.PMAP.demo.controller;
 
 import com.PMAP.demo.dto.auth.AuthResponse;

@@ -1,3 +1,5 @@
+// Poblador inicial de datos de prueba
+// Se ejecuta al arrancar la aplicación si las tablas están vacías
 package com.PMAP.demo.config;
 
 import com.PMAP.demo.entity.EstadoMateria;

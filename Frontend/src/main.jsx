@@ -1,3 +1,5 @@
+// Punto de entrada principal de la aplicación React
+// Renderiza el componente App envuelto en BrowserRouter para el enrutamiento
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';

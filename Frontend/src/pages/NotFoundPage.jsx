@@ -1,3 +1,4 @@
+// Página de error 404 para rutas inexistentes
 import { Link } from 'react-router-dom';
 import { AlertCircle, ArrowLeft } from 'lucide-react';
 

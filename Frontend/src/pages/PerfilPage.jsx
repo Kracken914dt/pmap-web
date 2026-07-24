@@ -1,14 +1,17 @@
+// Página de perfil del usuario autenticado
+// Muestra datos personales, rol, estado y fecha de registro
 import { getAuthUser } from '../utils/storage';
 import { User, Shield, Mail, Calendar, CheckCircle } from 'lucide-react';
 
 export default function PerfilPage() {
   const user = getAuthUser();
 
-  // Get initials for avatar
+  // Obtiene las iniciales del usuario para el avatar
   const initials = user
     ? `${user.nombres.charAt(0)}${user.apellidos.charAt(0)}`.toUpperCase()
     : 'U';
 
+  // Procesa la fecha de registro (puede venir como array o string desde el backend)
   let registrationDate = 'N/A';
   if (user && user.fechaRegistro) {
     let dateStr = '';
@@ -48,7 +51,7 @@ export default function PerfilPage() {
         <div className="absolute -right-24 -top-24 h-64 w-64 rounded-full bg-midnight-500/10 blur-3xl" />
 
         <div className="flex flex-col items-center gap-6 text-center sm:flex-row sm:text-left sm:items-start">
-          {/* Avatar Initials */}
+          {/* Avatar con iniciales */}
           <div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-midnight-500 to-violet-600 text-3xl font-bold text-white shadow-lg border border-white/20 select-none">
             {initials}
           </div>
@@ -59,6 +62,7 @@ export default function PerfilPage() {
                 {user?.nombres} {user?.apellidos}
               </h3>
               <div className="mt-1.5 flex flex-wrap justify-center sm:justify-start gap-2">
+                {/* Insignia del rol */}
                 <span
                   className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold ${
                     user?.rol === 'ADMINISTRADOR'
@@ -74,6 +78,7 @@ export default function PerfilPage() {
                   {user?.rol}
                 </span>
 
+                {/* Insignia del estado */}
                 <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                   <CheckCircle className="h-3.5 w-3.5" /> {user?.estado}
                 </span>
@@ -81,6 +86,7 @@ export default function PerfilPage() {
             </div>
 
             <div className="pt-4 border-t border-white/5 space-y-3.5">
+              {/* Correo electrónico */}
               <div className="flex items-center justify-center sm:justify-start gap-3 text-slate-300">
                 <Mail className="h-5 w-5 text-slate-400 shrink-0" />
                 <div className="text-left">
@@ -89,6 +95,7 @@ export default function PerfilPage() {
                 </div>
               </div>
 
+              {/* Fecha de registro */}
               <div className="flex items-center justify-center sm:justify-start gap-3 text-slate-300">
                 <Calendar className="h-5 w-5 text-slate-400 shrink-0" />
                 <div className="text-left">

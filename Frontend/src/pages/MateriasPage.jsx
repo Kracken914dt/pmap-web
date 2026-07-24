@@ -52,7 +52,7 @@ export default function MateriasPage() {
   const [categoriasList, setCategoriasList] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Modal states
+  // Estados para el modal de creación/edición
   const [modalOpen, setModalOpen] = useState(false);
   const [editingMateria, setEditingMateria] = useState(null);
 

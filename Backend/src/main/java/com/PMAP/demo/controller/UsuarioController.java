@@ -1,3 +1,5 @@
+// Controlador REST para la gestión de usuarios
+// Expone endpoints CRUD, búsqueda y activación/desactivación
 package com.PMAP.demo.controller;
 
 import com.PMAP.demo.dto.usuario.UsuarioCreateRequest;

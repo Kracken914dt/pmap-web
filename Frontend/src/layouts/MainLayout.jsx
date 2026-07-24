@@ -1,3 +1,6 @@
+// Layout principal de las páginas protegidas
+// Incluye la barra de navegación, el menú lateral y el pie de página
+// Renderiza el contenido de la ruta activa mediante <Outlet />
 import { Outlet, useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';

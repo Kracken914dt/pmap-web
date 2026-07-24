@@ -1,3 +1,4 @@
+// DTO para la solicitud de registro de un nuevo usuario
 package com.PMAP.demo.dto.auth;
 
 import com.PMAP.demo.entity.Role;

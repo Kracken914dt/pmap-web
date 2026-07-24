@@ -1,3 +1,5 @@
+// Repositorio JPA para la entidad SesionEstudio
+// Proporciona filtros por usuario, materia y estado
 package com.PMAP.demo.repository;
 
 import com.PMAP.demo.entity.EstadoSesionEstudio;

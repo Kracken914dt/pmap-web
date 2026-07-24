@@ -1,3 +1,4 @@
+// DTO para la actualización de una materia (incluye estado)
 package com.PMAP.demo.dto.materia;
 
 import com.PMAP.demo.entity.EstadoMateria;

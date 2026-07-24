@@ -1,3 +1,4 @@
+// Mapper para convertir la entidad Materia a su DTO de respuesta MateriaResponse
 package com.PMAP.demo.mapper;
 
 import com.PMAP.demo.dto.materia.MateriaResponse;

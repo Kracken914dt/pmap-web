@@ -1,3 +1,5 @@
+// Interfaz del servicio de materias
+// Define las operaciones CRUD, búsqueda y filtrado por categoría
 package com.PMAP.demo.service;
 
 import com.PMAP.demo.dto.materia.MateriaCreateRequest;

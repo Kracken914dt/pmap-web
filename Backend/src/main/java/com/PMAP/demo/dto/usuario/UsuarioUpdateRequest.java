@@ -1,3 +1,4 @@
+// DTO para la actualización de un usuario (incluye estado)
 package com.PMAP.demo.dto.usuario;
 
 import com.PMAP.demo.entity.EstadoUsuario;

@@ -1,3 +1,5 @@
+// Componente de ventana modal reutilizable
+// Se muestra u oculta según la prop 'open'
 export default function Modal({ open, title, children }) {
   if (!open) {
     return null;

@@ -1,3 +1,5 @@
+// Clase principal de la aplicación Spring Boot
+// Inicia el contexto de Spring y despliega el servidor embebido
 package com.PMAP.demo;
 
 import org.springframework.boot.SpringApplication;
@@ -5,9 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 public class DemoApplication {
-
 	public static void main(String[] args) {
 		SpringApplication.run(DemoApplication.class, args);
 	}
-
 }

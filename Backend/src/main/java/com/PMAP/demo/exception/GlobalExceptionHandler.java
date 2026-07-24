@@ -1,3 +1,5 @@
+// Manejador global de excepciones para toda la API
+// Captura y devuelve respuestas estructuradas con código HTTP apropiado
 package com.PMAP.demo.exception;
 
 import org.springframework.http.HttpStatus;

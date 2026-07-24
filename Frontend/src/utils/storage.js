@@ -1,3 +1,6 @@
+// Utilidades para gestionar la sesión del usuario en localStorage
+// Almacena y recupera el token JWT y los datos del usuario autenticado
+
 export function getAuthUser() {
   const rawUser = localStorage.getItem('pmap_user');
   return rawUser ? JSON.parse(rawUser) : null;

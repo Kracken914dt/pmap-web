@@ -1,3 +1,5 @@
+// Mapper para convertir la entidad SesionEstudio a su DTO de respuesta SesionEstudioResponse
+// Reutiliza UsuarioMapper y MateriaMapper para las relaciones
 package com.PMAP.demo.mapper;
 
 import com.PMAP.demo.dto.sesion.SesionEstudioResponse;

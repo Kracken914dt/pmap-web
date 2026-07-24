@@ -1,3 +1,5 @@
+// Repositorio JPA para la entidad Materia
+// Incluye búsqueda por nombre, categoría y combinación de ambos
 package com.PMAP.demo.repository;
 
 import com.PMAP.demo.entity.Materia;

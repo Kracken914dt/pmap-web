@@ -1,3 +1,4 @@
+// DTO para la creación de una materia
 package com.PMAP.demo.dto.materia;
 
 import jakarta.validation.constraints.NotBlank;

@@ -1,3 +1,5 @@
+// Interfaz del servicio de sesiones de estudio
+// Define las operaciones CRUD y filtros por usuario, materia y estado
 package com.PMAP.demo.service;
 
 import com.PMAP.demo.dto.sesion.SesionEstudioCreateRequest;

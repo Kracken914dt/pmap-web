@@ -1,3 +1,5 @@
+// Implementación del servicio de sesiones de estudio
+// CRUD completo con validación de referencias a usuario y materia
 package com.PMAP.demo.service.impl;
 
 import com.PMAP.demo.dto.sesion.SesionEstudioCreateRequest;

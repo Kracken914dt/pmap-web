@@ -1,3 +1,4 @@
+// DTO para la respuesta con datos de una materia
 package com.PMAP.demo.dto.materia;
 
 import com.PMAP.demo.entity.EstadoMateria;

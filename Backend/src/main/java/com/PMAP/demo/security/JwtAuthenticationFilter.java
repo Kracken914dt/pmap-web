@@ -1,3 +1,5 @@
+// Filtro de Spring Security que intercepta cada petición HTTP
+// Extrae y valida el token JWT del encabezado Authorization
 package com.PMAP.demo.security;
 
 import jakarta.servlet.FilterChain;

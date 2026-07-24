@@ -82,7 +82,7 @@ export default function SesionesPage() {
 
   const [loading, setLoading] = useState(true);
 
-  // Modal states
+    // Estados para el modal de creación/edición
   const [modalOpen, setModalOpen] = useState(false);
   const [editingSesion, setEditingSesion] = useState(null);
 
@@ -224,7 +224,7 @@ export default function SesionesPage() {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      {/* Cabecera */}
+      {/* Encabezado de la página */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="text-2xl font-bold text-white tracking-wide">Sesiones de Estudio</h2>

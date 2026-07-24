@@ -1,3 +1,4 @@
+// DTO para la respuesta con datos de un usuario (sin contraseña)
 package com.PMAP.demo.dto.usuario;
 
 import com.PMAP.demo.entity.EstadoUsuario;

@@ -1,3 +1,4 @@
+// DTO para la respuesta con datos completos de una sesión (incluye usuario y materia)
 package com.PMAP.demo.dto.sesion;
 
 import com.PMAP.demo.entity.EstadoSesionEstudio;

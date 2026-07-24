@@ -1,3 +1,4 @@
+// Servicio para la generación y validación de tokens JWT
 package com.PMAP.demo.security;
 
 import io.jsonwebtoken.Claims;

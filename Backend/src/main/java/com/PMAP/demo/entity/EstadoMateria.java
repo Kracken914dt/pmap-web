@@ -1,3 +1,4 @@
+// Estados posibles para una materia
 package com.PMAP.demo.entity;
 
 public enum EstadoMateria {

@@ -1,3 +1,4 @@
+// Componente contenedor para formularios con estilo consistente
 export default function Form({ title, children, onSubmit }) {
   return (
     <form onSubmit={onSubmit} className="rounded-3xl border border-white/10 bg-white/5 p-6">

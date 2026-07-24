@@ -1,3 +1,4 @@
+// Configuración de OpenAPI / Swagger para la documentación de la API
 package com.PMAP.demo.config;
 
 import io.swagger.v3.oas.models.OpenAPI;

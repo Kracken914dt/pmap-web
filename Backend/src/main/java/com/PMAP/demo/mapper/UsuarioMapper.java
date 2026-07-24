@@ -1,3 +1,4 @@
+// Mapper para convertir la entidad Usuario a su DTO de respuesta UsuarioResponse
 package com.PMAP.demo.mapper;
 
 import com.PMAP.demo.dto.usuario.UsuarioResponse;

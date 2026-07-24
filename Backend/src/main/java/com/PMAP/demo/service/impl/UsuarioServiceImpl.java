@@ -1,3 +1,5 @@
+// Implementación del servicio de usuarios
+// CRUD completo con búsqueda, activación/desactivación y validación de unicidad de correo
 package com.PMAP.demo.service.impl;
 
 import com.PMAP.demo.dto.usuario.UsuarioCreateRequest;

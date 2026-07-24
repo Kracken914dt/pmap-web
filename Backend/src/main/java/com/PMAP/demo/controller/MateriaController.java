@@ -1,3 +1,5 @@
+// Controlador REST para la gestión de materias
+// Expone endpoints CRUD, búsqueda por nombre y filtrado por categoría
 package com.PMAP.demo.controller;
 
 import com.PMAP.demo.dto.materia.MateriaCreateRequest;

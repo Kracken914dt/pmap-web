@@ -1,3 +1,5 @@
+// Controlador REST para la gestión de sesiones de estudio
+// Expone endpoints CRUD y filtros por usuario, materia y estado
 package com.PMAP.demo.controller;
 
 import com.PMAP.demo.dto.sesion.SesionEstudioCreateRequest;

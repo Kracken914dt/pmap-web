@@ -1,3 +1,4 @@
+// DTO para la solicitud de inicio de sesión
 package com.PMAP.demo.dto.auth;
 
 import jakarta.validation.constraints.Email;

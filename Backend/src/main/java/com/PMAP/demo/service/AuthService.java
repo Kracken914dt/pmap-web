@@ -1,3 +1,5 @@
+// Interfaz del servicio de autenticación
+// Define las operaciones de registro e inicio de sesión
 package com.PMAP.demo.service;
 
 import com.PMAP.demo.dto.auth.AuthResponse;

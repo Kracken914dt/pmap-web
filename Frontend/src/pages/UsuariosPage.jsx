@@ -1,3 +1,5 @@
+// Página de gestión de usuarios
+// Permite crear, editar, buscar, activar/desactivar y eliminar usuarios
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Swal from 'sweetalert2';
@@ -6,6 +8,7 @@ import Loader from '../components/Loader';
 import { Search, UserPlus, Edit2, Trash2, Shield, User, ToggleLeft, ToggleRight, X } from 'lucide-react';
 import { getAuthUser } from '../utils/storage';
 
+// Convierte un valor de fecha/hora del backend a formato legible
 function formatDateTime(dateTimeVal) {
   if (!dateTimeVal) return '';
   let dateStr = '';
@@ -31,6 +34,7 @@ function formatDateTime(dateTimeVal) {
   });
 }
 
+// Componente interno para mostrar errores de validación en formularios
 function FormErrorTooltip({ error }) {
   if (!error) return null;
   return (
@@ -52,7 +56,6 @@ export default function UsuariosPage() {
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
   
-  // Modal states
   const [modalOpen, setModalOpen] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
 

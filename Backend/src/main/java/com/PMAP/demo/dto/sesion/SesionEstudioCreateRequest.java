@@ -1,3 +1,4 @@
+// DTO para la creación de una sesión de estudio
 package com.PMAP.demo.dto.sesion;
 
 import com.PMAP.demo.entity.EstadoSesionEstudio;

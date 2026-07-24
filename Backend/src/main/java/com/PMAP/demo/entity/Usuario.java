@@ -1,3 +1,5 @@
+// Entidad JPA que representa a un usuario del sistema
+// Almacena datos personales, credenciales, rol y estado de la cuenta
 package com.PMAP.demo.entity;
 
 import jakarta.persistence.CascadeType;

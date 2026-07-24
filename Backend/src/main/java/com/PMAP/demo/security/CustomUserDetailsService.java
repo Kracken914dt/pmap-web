@@ -1,3 +1,5 @@
+// Servicio personalizado de UserDetailsService para Spring Security
+// Carga los datos del usuario desde la base de datos por correo electrónico
 package com.PMAP.demo.security;
 
 import com.PMAP.demo.entity.Usuario;

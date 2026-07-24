@@ -1,3 +1,4 @@
+// Barra de búsqueda reutilizable con estilo consistente
 export default function SearchBar({ value, onChange, placeholder = 'Search...' }) {
   return (
     <input

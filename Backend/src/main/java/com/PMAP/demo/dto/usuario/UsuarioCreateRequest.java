@@ -1,3 +1,4 @@
+// DTO para la creación de un usuario
 package com.PMAP.demo.dto.usuario;
 
 import com.PMAP.demo.entity.Role;

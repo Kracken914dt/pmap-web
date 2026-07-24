@@ -1,3 +1,4 @@
+// Componente de paginación con botones anterior/siguiente
 export default function Pagination({ currentPage, totalPages, onPageChange }) {
   return (
     <div className="flex items-center justify-end gap-2 text-sm">

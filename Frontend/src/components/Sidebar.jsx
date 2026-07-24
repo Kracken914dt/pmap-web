@@ -1,3 +1,5 @@
+// Menú lateral de navegación con enlaces a los módulos principales
+// Usa NavLink de React Router para resaltar la ruta activa
 import { NavLink } from 'react-router-dom';
 import { BookOpen, CalendarRange, LayoutDashboard, UserCircle, Users } from 'lucide-react';
 

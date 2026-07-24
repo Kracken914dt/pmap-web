@@ -1,3 +1,5 @@
+// Implementación del servicio de autenticación
+// Gestiona el registro de nuevos usuarios y el inicio de sesión con generación de JWT
 package com.PMAP.demo.service.impl;
 
 import com.PMAP.demo.dto.auth.AuthResponse;

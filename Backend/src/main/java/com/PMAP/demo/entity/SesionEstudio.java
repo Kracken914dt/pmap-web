@@ -1,3 +1,5 @@
+// Entidad JPA que representa una sesión de estudio
+// Vincula un usuario con una materia en una fecha y horario específicos
 package com.PMAP.demo.entity;
 
 import jakarta.persistence.Column;

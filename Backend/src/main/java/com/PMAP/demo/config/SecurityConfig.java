@@ -1,3 +1,5 @@
+// Configuración de seguridad de Spring Security
+// Deshabilita CSRF, configura CORS, establece política sin sesión (stateless) y define rutas públicas/protegidas
 package com.PMAP.demo.config;
 
 import com.PMAP.demo.security.JwtAuthenticationFilter;

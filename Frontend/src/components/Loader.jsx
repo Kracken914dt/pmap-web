@@ -1,3 +1,4 @@
+// Componente de carga que muestra un spinner y un mensaje
 import Spinner from './Spinner';
 
 export default function Loader() {

@@ -1,3 +1,4 @@
+// Entidad JPA que representa una materia o asignatura disponible para estudio
 package com.PMAP.demo.entity;
 
 import jakarta.persistence.CascadeType;

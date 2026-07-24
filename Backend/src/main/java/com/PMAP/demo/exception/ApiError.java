@@ -1,3 +1,4 @@
+// DTO para representar errores de la API de forma estructurada
 package com.PMAP.demo.exception;
 
 import java.time.LocalDateTime;

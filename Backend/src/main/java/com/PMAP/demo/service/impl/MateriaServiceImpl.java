@@ -1,3 +1,5 @@
+// Implementación del servicio de materias
+// CRUD completo con búsqueda por nombre, filtrado por categoría y validación de unicidad
 package com.PMAP.demo.service.impl;
 
 import com.PMAP.demo.dto.materia.MateriaCreateRequest;

@@ -1,3 +1,4 @@
+// Componente de tabla reutilizable con encabezados configurables
 export default function Table({ headers, children }) {
   return (
     <div className="overflow-hidden rounded-3xl border border-white/10 bg-white/5">

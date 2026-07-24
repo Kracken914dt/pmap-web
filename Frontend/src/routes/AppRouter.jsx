@@ -1,3 +1,5 @@
+// Configuración de rutas de la aplicación
+// Define las rutas públicas (login), protegidas (dashboard, usuarios, etc.) y la página 404
 import { Navigate, Route, Routes } from 'react-router-dom';
 import ProtectedRoute from './ProtectedRoute';
 import MainLayout from '../layouts/MainLayout';

@@ -1,3 +1,4 @@
+// Excepción lanzada cuando un recurso solicitado no existe en la base de datos
 package com.PMAP.demo.exception;
 
 public class ResourceNotFoundException extends RuntimeException {

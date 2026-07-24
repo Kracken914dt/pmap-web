@@ -1,3 +1,4 @@
+// Barra de navegación superior con el nombre del usuario y botón de cerrar sesión
 import { LogOut, Sparkles } from 'lucide-react';
 
 export default function Navbar({ userName, onLogout }) {
