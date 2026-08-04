@@ -52,6 +52,7 @@ function FormErrorTooltip({ error }) {
 
 export default function UsuariosPage() {
   const currentUser = getAuthUser();
+  const isAdmin = currentUser?.rol === 'ADMINISTRATOR';
   const [usuarios, setUsuarios] = useState([]);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
@@ -185,12 +186,14 @@ export default function UsuariosPage() {
           <h2 className="text-2xl font-bold text-white tracking-wide">Gestión de Usuarios</h2>
           <p className="text-sm text-slate-400">Registra y controla el acceso de administradores y estudiantes.</p>
         </div>
-        <button
-          onClick={handleCreateOpen}
-          className="inline-flex items-center gap-2 rounded-2xl bg-midnight-600 px-5 py-3 font-semibold text-white transition hover:bg-midnight-500 active:scale-95 shadow-lg shadow-midnight-500/20"
-        >
-          <UserPlus className="h-5 w-5" /> Registrar Usuario
-        </button>
+        {isAdmin && (
+          <button
+            onClick={handleCreateOpen}
+            className="inline-flex items-center gap-2 rounded-2xl bg-midnight-600 px-5 py-3 font-semibold text-white transition hover:bg-midnight-500 active:scale-95 shadow-lg shadow-midnight-500/20"
+          >
+            <UserPlus className="h-5 w-5" /> Registrar Usuario
+          </button>
+        )}
       </div>
 
       {/* Buscador */}
@@ -277,42 +280,48 @@ export default function UsuariosPage() {
                         {formatDateTime(usuario.fechaRegistro)}
                       </td>
                       <td className="px-6 py-4 text-right">
-                        {/* Evitar que el usuario activo realice acciones destructivas sobre sí mismo */}
-                        {usuario.id !== currentUser?.id ? (
-                          <div className="flex items-center justify-end gap-2">
-                            <button
-                              onClick={() => handleToggleStatus(usuario)}
-                              title={usuario.estado === 'ACTIVO' ? 'Desactivar Usuario' : 'Activar Usuario'}
-                              className={`p-2 rounded-xl transition ${
-                                usuario.estado === 'ACTIVO'
-                                  ? 'text-emerald-400 hover:bg-emerald-500/10'
-                                  : 'text-rose-400 hover:bg-rose-500/10'
-                              }`}
-                            >
-                              {usuario.estado === 'ACTIVO' ? (
-                                <ToggleRight className="h-5 w-5" />
-                              ) : (
-                                <ToggleLeft className="h-5 w-5" />
-                              )}
-                            </button>
-                            <button
-                              onClick={() => handleEditOpen(usuario)}
-                              title="Editar Usuario"
-                              className="p-2 rounded-xl text-slate-300 hover:bg-white/10 hover:text-white transition"
-                            >
-                              <Edit2 className="h-4.5 w-4.5" />
-                            </button>
-                            <button
-                              onClick={() => handleDelete(usuario.id)}
-                              title="Eliminar Usuario"
-                              className="p-2 rounded-xl text-rose-400 hover:bg-rose-500/10 hover:text-rose-300 transition"
-                            >
-                              <Trash2 className="h-4.5 w-4.5" />
-                            </button>
-                          </div>
+                        {/* Evitar que el usuario activo realice acciones destructivas sobre sí mismo y restringir a Administrador */}
+                        {isAdmin ? (
+                          usuario.id !== currentUser?.id ? (
+                            <div className="flex items-center justify-end gap-2">
+                              <button
+                                onClick={() => handleToggleStatus(usuario)}
+                                title={usuario.estado === 'ACTIVO' ? 'Desactivar Usuario' : 'Activar Usuario'}
+                                className={`p-2 rounded-xl transition ${
+                                  usuario.estado === 'ACTIVO'
+                                    ? 'text-emerald-400 hover:bg-emerald-500/10'
+                                    : 'text-rose-400 hover:bg-rose-500/10'
+                                }`}
+                              >
+                                {usuario.estado === 'ACTIVO' ? (
+                                  <ToggleRight className="h-5 w-5" />
+                                ) : (
+                                  <ToggleLeft className="h-5 w-5" />
+                                )}
+                              </button>
+                              <button
+                                onClick={() => handleEditOpen(usuario)}
+                                title="Editar Usuario"
+                                className="p-2 rounded-xl text-slate-300 hover:bg-white/10 hover:text-white transition"
+                              >
+                                <Edit2 className="h-4.5 w-4.5" />
+                              </button>
+                              <button
+                                onClick={() => handleDelete(usuario.id)}
+                                title="Eliminar Usuario"
+                                className="p-2 rounded-xl text-rose-400 hover:bg-rose-500/10 hover:text-rose-300 transition"
+                              >
+                                <Trash2 className="h-4.5 w-4.5" />
+                              </button>
+                            </div>
+                          ) : (
+                            <span className="text-xs text-slate-500 font-semibold uppercase tracking-wider pr-2 select-none">
+                              Sin Acciones
+                            </span>
+                          )
                         ) : (
                           <span className="text-xs text-slate-500 font-semibold uppercase tracking-wider pr-2 select-none">
-                            Sin Acciones
+                            Lectura
                           </span>
                         )}
                       </td>

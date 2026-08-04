@@ -1,0 +1,48 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: pmap-db
+    environment:
+      POSTGRES_DB: pmap_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 12345
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d pmap_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: ./Backend
+    container_name: pmap-backend
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/pmap_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: 12345
+      JWT_SECRET: ${JWT_SECRET:-ChangeThisSecretToALongRandomValueChangeThisSecretToALongRandomValue}
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./Frontend
+      args:
+        # URL reachable from the browser. Local: backend port published on the host.
+        # For remote deploys, point this to the public backend URL.
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:8080/api}
+    container_name: pmap-frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+
+volumes:
+  pgdata:

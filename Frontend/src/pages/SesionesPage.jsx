@@ -4,6 +4,7 @@ import Swal from 'sweetalert2';
 import http from '../api/http';
 import Loader from '../components/Loader';
 import { Search, Calendar, Plus, Edit2, Trash2, Clock, Goal, X, User, BookOpen } from 'lucide-react';
+import { getAuthUser } from '../utils/storage';
 
 function formatTime(timeVal) {
   if (!timeVal) return '';
@@ -71,6 +72,8 @@ function FormErrorTooltip({ error }) {
 }
 
 export default function SesionesPage() {
+  const currentUser = getAuthUser();
+  const isAdmin = currentUser?.rol === 'ADMINISTRATOR';
   const [sesiones, setSesiones] = useState([]);
   const [usuarios, setUsuarios] = useState([]);
   const [materias, setMaterias] = useState([]);
@@ -151,10 +154,10 @@ export default function SesionesPage() {
       return;
     }
 
-    // Prepare body: converting IDs to Numbers
+    // Prepare body: converting IDs to Numbers (respetando la asignación previa si está deshabilitado)
     const body = {
-      usuarioId: Number(values.usuarioId),
-      materiaId: Number(values.materiaId),
+      usuarioId: Number(values.usuarioId || editingSesion?.usuario?.id),
+      materiaId: Number(values.materiaId || editingSesion?.materia?.id),
       fecha: values.fecha,
       horaInicio: values.horaInicio.length === 5 ? `${values.horaInicio}:00` : values.horaInicio,
       horaFin: values.horaFin.length === 5 ? `${values.horaFin}:00` : values.horaFin,
@@ -230,12 +233,14 @@ export default function SesionesPage() {
           <h2 className="text-2xl font-bold text-white tracking-wide">Sesiones de Estudio</h2>
           <p className="text-sm text-slate-400">Planifica y haz seguimiento a las clases y tutorías de los estudiantes.</p>
         </div>
-        <button
-          onClick={handleCreateOpen}
-          className="inline-flex items-center gap-2 rounded-2xl bg-midnight-600 px-5 py-3 font-semibold text-white transition hover:bg-midnight-500 active:scale-95 shadow-lg shadow-midnight-500/20"
-        >
-          <Plus className="h-5 w-5" /> Programar Sesión
-        </button>
+        {isAdmin && (
+          <button
+            onClick={handleCreateOpen}
+            className="inline-flex items-center gap-2 rounded-2xl bg-midnight-600 px-5 py-3 font-semibold text-white transition hover:bg-midnight-500 active:scale-95 shadow-lg shadow-midnight-500/20"
+          >
+            <Plus className="h-5 w-5" /> Programar Sesión
+          </button>
+        )}
       </div>
 
       {/* Panel de Filtros Combinados */}
@@ -377,6 +382,7 @@ export default function SesionesPage() {
                       </td>
                       <td className="px-6 py-4 text-right">
                         <div className="flex items-center justify-end gap-2">
+                          {/* Editar sesión: permitido para Administrador y Estudiante */}
                           <button
                             onClick={() => handleEditOpen(sesion)}
                             title="Editar Sesión"
@@ -384,13 +390,16 @@ export default function SesionesPage() {
                           >
                             <Edit2 className="h-4.5 w-4.5" />
                           </button>
-                          <button
-                            onClick={() => handleDelete(sesion.id)}
-                            title="Eliminar Sesión"
-                            className="p-2 rounded-xl text-rose-400 hover:bg-rose-500/10 hover:text-rose-300 transition"
-                          >
-                            <Trash2 className="h-4.5 w-4.5" />
-                          </button>
+                          {/* Eliminar sesión: únicamente para Administrador */}
+                          {isAdmin && (
+                            <button
+                              onClick={() => handleDelete(sesion.id)}
+                              title="Eliminar Sesión"
+                              className="p-2 rounded-xl text-rose-400 hover:bg-rose-500/10 hover:text-rose-300 transition"
+                            >
+                              <Trash2 className="h-4.5 w-4.5" />
+                            </button>
+                          )}
                         </div>
                       </td>
                     </tr>
@@ -416,17 +425,18 @@ export default function SesionesPage() {
               {editingSesion ? 'Editar Sesión de Estudio' : 'Programar Sesión de Estudio'}
             </h3>
             <p className="text-sm text-slate-400 mt-1">
-              {editingSesion ? 'Modifica los detalles del cronograma de estudio.' : 'Planifica una nueva sesión de aprendizaje.'}
+              {editingSesion ? 'Modifica la fecha, horario, objetivo o estado de la sesión.' : 'Planifica una nueva sesión de aprendizaje.'}
             </p>
 
             <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-4">
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">
-                  Estudiante
+                  Estudiante {!isAdmin && <span className="text-[10px] text-slate-500 font-normal lowercase">(asignado por administrador)</span>}
                 </label>
                 <select
                   {...register('usuarioId', { required: 'Por favor, selecciona un estudiante.' })}
-                  className="w-full rounded-xl border border-white/10 bg-slate-900 px-4 py-2.5 text-white outline-none focus:border-midnight-500 transition"
+                  disabled={!isAdmin}
+                  className={`w-full rounded-xl border border-white/10 bg-slate-900 px-4 py-2.5 text-white outline-none focus:border-midnight-500 transition ${!isAdmin ? 'opacity-60 cursor-not-allowed' : ''}`}
                 >
                   <option value="">Selecciona un estudiante...</option>
                   {usuarios.map(u => (
@@ -438,11 +448,12 @@ export default function SesionesPage() {
 
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">
-                  Materia / Asignatura
+                  Materia / Asignatura {!isAdmin && <span className="text-[10px] text-slate-500 font-normal lowercase">(asignada por administrador)</span>}
                 </label>
                 <select
                   {...register('materiaId', { required: 'Por favor, selecciona una materia.' })}
-                  className="w-full rounded-xl border border-white/10 bg-slate-900 px-4 py-2.5 text-white outline-none focus:border-midnight-500 transition"
+                  disabled={!isAdmin}
+                  className={`w-full rounded-xl border border-white/10 bg-slate-900 px-4 py-2.5 text-white outline-none focus:border-midnight-500 transition ${!isAdmin ? 'opacity-60 cursor-not-allowed' : ''}`}
                 >
                   <option value="">Selecciona una materia...</option>
                   {materias.map(m => (

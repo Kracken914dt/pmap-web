@@ -3,8 +3,10 @@
 package com.PMAP.demo.config;
 
 import com.PMAP.demo.security.JwtAuthenticationFilter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -20,12 +22,19 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    // Origenes permitidos para CORS, separados por coma.
+    // En produccion se sobreescribe con la variable APP_CORS_ALLOWED_ORIGINS
+    // para permitir el dominio del frontend desplegado (p. ej. Vercel).
+    @Value("${app.cors.allowed-origins}")
+    private List<String> allowedOrigins;
 
     public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
@@ -45,18 +54,30 @@ public class SecurityConfig {
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**"
                         ).permitAll()
-                        .anyRequest().authenticated() // Requiere token JWT para las demás peticiones
+                        // Solo ADMINISTRADOR puede crear, editar o eliminar usuarios
+                        .requestMatchers(HttpMethod.POST, "/api/usuarios/**").hasRole("ADMINISTRATOR")
+                        .requestMatchers(HttpMethod.PUT, "/api/usuarios/**").hasRole("ADMINISTRATOR")
+                        .requestMatchers(HttpMethod.DELETE, "/api/usuarios/**").hasRole("ADMINISTRATOR")
+                        // Solo ADMINISTRADOR puede crear o eliminar sesiones de estudio (asignación inicial y borrado)
+                        .requestMatchers(HttpMethod.POST, "/api/sesiones/**").hasRole("ADMINISTRATOR")
+                        .requestMatchers(HttpMethod.DELETE, "/api/sesiones/**").hasRole("ADMINISTRATOR")
+                        // Solo ADMINISTRADOR puede crear, editar o eliminar materias
+                        .requestMatchers(HttpMethod.POST, "/api/materias/**").hasRole("ADMINISTRATOR")
+                        .requestMatchers(HttpMethod.PUT, "/api/materias/**").hasRole("ADMINISTRATOR")
+                        .requestMatchers(HttpMethod.DELETE, "/api/materias/**").hasRole("ADMINISTRATOR")
+                        .anyRequest().authenticated() // Requiere token JWT para las demás peticiones (ej. consultas GET)
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
-    // Configuración global de CORS para permitir peticiones desde el frontend (Vite en puerto 5173)
+    // Configuración global de CORS para permitir peticiones desde los origenes
+    // declarados en la propiedad app.cors.allowed-origins (dev local + produccion)
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173"));
+        configuration.setAllowedOrigins(allowedOrigins);
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept", "X-Requested-With"));
         configuration.setAllowCredentials(true);

@@ -17,8 +17,10 @@ Frontend/.vite/
 Frontend/coverage/
 Frontend/.env
 Frontend/.env.*
+!Frontend/.env.example
 
 # Logs and temporary files
 *.log
 *.tmp
 *.temp
+.atl

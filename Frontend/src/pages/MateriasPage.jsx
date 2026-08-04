@@ -4,6 +4,7 @@ import Swal from 'sweetalert2';
 import http from '../api/http';
 import Loader from '../components/Loader';
 import { Search, Plus, Edit2, Trash2, BookOpen, ToggleLeft, ToggleRight, X, Filter } from 'lucide-react';
+import { getAuthUser } from '../utils/storage';
 
 function formatDateTime(dateTimeVal) {
   if (!dateTimeVal) return '';
@@ -46,6 +47,8 @@ function FormErrorTooltip({ error }) {
 }
 
 export default function MateriasPage() {
+  const currentUser = getAuthUser();
+  const isAdmin = currentUser?.rol === 'ADMINISTRATOR';
   const [materias, setMaterias] = useState([]);
   const [nombreSearch, setNombreSearch] = useState('');
   const [categoriaFilter, setCategoriaFilter] = useState('');
@@ -190,12 +193,14 @@ export default function MateriasPage() {
           <h2 className="text-2xl font-bold text-white tracking-wide">Gestión de Materias</h2>
           <p className="text-sm text-slate-400">Administra las materias y asignaturas disponibles para estudio.</p>
         </div>
-        <button
-          onClick={handleCreateOpen}
-          className="inline-flex items-center gap-2 rounded-2xl bg-midnight-600 px-5 py-3 font-semibold text-white transition hover:bg-midnight-500 active:scale-95 shadow-lg shadow-midnight-500/20"
-        >
-          <Plus className="h-5 w-5" /> Nueva Materia
-        </button>
+        {isAdmin && (
+          <button
+            onClick={handleCreateOpen}
+            className="inline-flex items-center gap-2 rounded-2xl bg-midnight-600 px-5 py-3 font-semibold text-white transition hover:bg-midnight-500 active:scale-95 shadow-lg shadow-midnight-500/20"
+          >
+            <Plus className="h-5 w-5" /> Nueva Materia
+          </button>
+        )}
       </div>
 
       {/* Buscadores y Filtros */}
@@ -305,37 +310,43 @@ export default function MateriasPage() {
                         {formatDateTime(materia.fechaCreacion)}
                       </td>
                       <td className="px-6 py-4 text-right">
-                        <div className="flex items-center justify-end gap-2">
-                          <button
-                            onClick={() => handleToggleStatus(materia)}
-                            title={materia.estado === 'ACTIVA' ? 'Desactivar Materia' : 'Activar Materia'}
-                            className={`p-2 rounded-xl transition ${
-                              materia.estado === 'ACTIVA'
-                                ? 'text-emerald-400 hover:bg-emerald-500/10'
-                                : 'text-rose-400 hover:bg-rose-500/10'
-                            }`}
-                          >
-                            {materia.estado === 'ACTIVA' ? (
-                              <ToggleRight className="h-5 w-5" />
-                            ) : (
-                              <ToggleLeft className="h-5 w-5" />
-                            )}
-                          </button>
-                          <button
-                            onClick={() => handleEditOpen(materia)}
-                            title="Editar Materia"
-                            className="p-2 rounded-xl text-slate-300 hover:bg-white/10 hover:text-white transition"
-                          >
-                            <Edit2 className="h-4.5 w-4.5" />
-                          </button>
-                          <button
-                            onClick={() => handleDelete(materia.id)}
-                            title="Eliminar Materia"
-                            className="p-2 rounded-xl text-rose-400 hover:bg-rose-500/10 hover:text-rose-300 transition"
-                          >
-                            <Trash2 className="h-4.5 w-4.5" />
-                          </button>
-                        </div>
+                        {isAdmin ? (
+                          <div className="flex items-center justify-end gap-2">
+                            <button
+                              onClick={() => handleToggleStatus(materia)}
+                              title={materia.estado === 'ACTIVA' ? 'Desactivar Materia' : 'Activar Materia'}
+                              className={`p-2 rounded-xl transition ${
+                                materia.estado === 'ACTIVA'
+                                  ? 'text-emerald-400 hover:bg-emerald-500/10'
+                                  : 'text-rose-400 hover:bg-rose-500/10'
+                              }`}
+                            >
+                              {materia.estado === 'ACTIVA' ? (
+                                <ToggleRight className="h-5 w-5" />
+                              ) : (
+                                <ToggleLeft className="h-5 w-5" />
+                              )}
+                            </button>
+                            <button
+                              onClick={() => handleEditOpen(materia)}
+                              title="Editar Materia"
+                              className="p-2 rounded-xl text-slate-300 hover:bg-white/10 hover:text-white transition"
+                            >
+                              <Edit2 className="h-4.5 w-4.5" />
+                            </button>
+                            <button
+                              onClick={() => handleDelete(materia.id)}
+                              title="Eliminar Materia"
+                              className="p-2 rounded-xl text-rose-400 hover:bg-rose-500/10 hover:text-rose-300 transition"
+                            >
+                              <Trash2 className="h-4.5 w-4.5" />
+                            </button>
+                          </div>
+                        ) : (
+                          <span className="text-xs text-slate-500 font-semibold uppercase tracking-wider pr-2 select-none">
+                            Lectura
+                          </span>
+                        )}
                       </td>
                     </tr>
                   ))
