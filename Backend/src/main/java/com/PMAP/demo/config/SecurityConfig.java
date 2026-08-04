@@ -48,6 +48,8 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults()) // Activar CORS con la configuración definida abajo
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // No crear sesión HTTP
                 .authorizeHttpRequests(auth -> auth
+                        // Permitir preflight CORS (OPTIONS) sin autenticación
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(
                                 "/api/auth/**", // Rutas de login/registro públicas
                                 "/swagger-ui.html",
