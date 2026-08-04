@@ -52,7 +52,7 @@ function FormErrorTooltip({ error }) {
 
 export default function UsuariosPage() {
   const currentUser = getAuthUser();
-  const isAdmin = currentUser?.rol === 'ADMINISTRATOR';
+  const isAdmin = currentUser?.rol === 'ADMINISTRADOR';
   const [usuarios, setUsuarios] = useState([]);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);

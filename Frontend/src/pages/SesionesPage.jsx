@@ -73,7 +73,7 @@ function FormErrorTooltip({ error }) {
 
 export default function SesionesPage() {
   const currentUser = getAuthUser();
-  const isAdmin = currentUser?.rol === 'ADMINISTRATOR';
+  const isAdmin = currentUser?.rol === 'ADMINISTRADOR';
   const [sesiones, setSesiones] = useState([]);
   const [usuarios, setUsuarios] = useState([]);
   const [materias, setMaterias] = useState([]);
@@ -95,8 +95,9 @@ export default function SesionesPage() {
   async function loadData() {
     setLoading(true);
     try {
+      const sesionesParams = !isAdmin && currentUser?.id ? { usuarioId: currentUser.id } : {};
       const [sesionesRes, usuariosRes, materiasRes] = await Promise.all([
-        http.get('/sesiones'),
+        http.get('/sesiones', { params: sesionesParams }),
         http.get('/usuarios'),
         http.get('/materias')
       ]);
@@ -175,7 +176,8 @@ export default function SesionesPage() {
       }
       setModalOpen(false);
       // Reload sessions list
-      const sesionesRes = await http.get('/sesiones');
+      const sesionesParams = !isAdmin && currentUser?.id ? { usuarioId: currentUser.id } : {};
+      const sesionesRes = await http.get('/sesiones', { params: sesionesParams });
       setSesiones(sesionesRes.data);
     } catch (error) {
       console.error('Error al guardar la sesión de estudio', error);
@@ -201,7 +203,8 @@ export default function SesionesPage() {
       try {
         await http.delete(`/sesiones/${id}`);
         Swal.fire('¡Eliminada!', 'La sesión de estudio ha sido eliminada.', 'success');
-        const sesionesRes = await http.get('/sesiones');
+        const sesionesParams = !isAdmin && currentUser?.id ? { usuarioId: currentUser.id } : {};
+        const sesionesRes = await http.get('/sesiones', { params: sesionesParams });
         setSesiones(sesionesRes.data);
       } catch (error) {
         console.error('Error al eliminar sesión de estudio', error);
@@ -219,10 +222,11 @@ export default function SesionesPage() {
 
   // In-memory combined filtering
   const filteredSesiones = sesiones.filter((sesion) => {
+    const isOwnUser = !isAdmin && currentUser?.id ? sesion.usuario?.id === currentUser.id : true;
     const matchesUser = usuarioFilter ? sesion.usuario?.id === Number(usuarioFilter) : true;
     const matchesMateria = materiaFilter ? sesion.materia?.id === Number(materiaFilter) : true;
     const matchesEstado = estadoFilter ? sesion.estado === estadoFilter : true;
-    return matchesUser && matchesMateria && matchesEstado;
+    return isOwnUser && matchesUser && matchesMateria && matchesEstado;
   });
 
   return (

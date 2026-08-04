@@ -48,7 +48,7 @@ function FormErrorTooltip({ error }) {
 
 export default function MateriasPage() {
   const currentUser = getAuthUser();
-  const isAdmin = currentUser?.rol === 'ADMINISTRATOR';
+  const isAdmin = currentUser?.rol === 'ADMINISTRADOR';
   const [materias, setMaterias] = useState([]);
   const [nombreSearch, setNombreSearch] = useState('');
   const [categoriaFilter, setCategoriaFilter] = useState('');

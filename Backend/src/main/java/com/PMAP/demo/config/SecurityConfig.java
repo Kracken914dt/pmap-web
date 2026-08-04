@@ -55,16 +55,16 @@ public class SecurityConfig {
                                 "/v3/api-docs/**"
                         ).permitAll()
                         // Solo ADMINISTRADOR puede crear, editar o eliminar usuarios
-                        .requestMatchers(HttpMethod.POST, "/api/usuarios/**").hasRole("ADMINISTRATOR")
-                        .requestMatchers(HttpMethod.PUT, "/api/usuarios/**").hasRole("ADMINISTRATOR")
-                        .requestMatchers(HttpMethod.DELETE, "/api/usuarios/**").hasRole("ADMINISTRATOR")
+                        .requestMatchers(HttpMethod.POST, "/api/usuarios/**").hasRole("ADMINISTRADOR")
+                        .requestMatchers(HttpMethod.PUT, "/api/usuarios/**").hasRole("ADMINISTRADOR")
+                        .requestMatchers(HttpMethod.DELETE, "/api/usuarios/**").hasRole("ADMINISTRADOR")
                         // Solo ADMINISTRADOR puede crear o eliminar sesiones de estudio (asignación inicial y borrado)
-                        .requestMatchers(HttpMethod.POST, "/api/sesiones/**").hasRole("ADMINISTRATOR")
-                        .requestMatchers(HttpMethod.DELETE, "/api/sesiones/**").hasRole("ADMINISTRATOR")
+                        .requestMatchers(HttpMethod.POST, "/api/sesiones/**").hasRole("ADMINISTRADOR")
+                        .requestMatchers(HttpMethod.DELETE, "/api/sesiones/**").hasRole("ADMINISTRADOR")
                         // Solo ADMINISTRADOR puede crear, editar o eliminar materias
-                        .requestMatchers(HttpMethod.POST, "/api/materias/**").hasRole("ADMINISTRATOR")
-                        .requestMatchers(HttpMethod.PUT, "/api/materias/**").hasRole("ADMINISTRATOR")
-                        .requestMatchers(HttpMethod.DELETE, "/api/materias/**").hasRole("ADMINISTRATOR")
+                        .requestMatchers(HttpMethod.POST, "/api/materias/**").hasRole("ADMINISTRADOR")
+                        .requestMatchers(HttpMethod.PUT, "/api/materias/**").hasRole("ADMINISTRADOR")
+                        .requestMatchers(HttpMethod.DELETE, "/api/materias/**").hasRole("ADMINISTRADOR")
                         .anyRequest().authenticated() // Requiere token JWT para las demás peticiones (ej. consultas GET)
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
