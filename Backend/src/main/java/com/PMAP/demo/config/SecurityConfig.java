@@ -51,6 +51,7 @@ public class SecurityConfig {
                         // Permitir preflight CORS (OPTIONS) sin autenticación
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(
+                                "/",           // Ruta raíz para verificación de estado (Health Check)
                                 "/api/auth/**", // Rutas de login/registro públicas
                                 "/swagger-ui.html",
                                 "/swagger-ui/**",
