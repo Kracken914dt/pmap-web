@@ -1,0 +1,91 @@
+@startuml diagrama-casos-uso
+left to right direction
+skinparam packageStyle rectangle
+skinparam actorStyle awesome
+skinparam shadowing false
+
+actor "Administrador" as Admin
+actor "Estudiante" as Estudiante
+
+
+rectangle "Plataforma de Monitoreo Académico Personalizado (PMAP)" {
+
+  package "Módulo de Autenticación" {
+    usecase "Iniciar Sesión" as UC_Login
+    usecase "Registrarse" as UC_Register
+    usecase "Cerrar Sesión" as UC_Logout
+  }
+
+  package "Módulo de Gestión de Usuarios" {
+    usecase "Registrar Nuevo Usuario" as UC_CreateUser
+    usecase "Editar Usuario" as UC_EditUser
+    usecase "Activar / Desactivar Usuario" as UC_ToggleUser
+    usecase "Eliminar Usuario" as UC_DeleteUser
+    usecase "Consultar / Buscar Usuarios" as UC_ListUsers
+  }
+
+  package "Módulo de Gestión de Materias" {
+    usecase "Crear Materia" as UC_CreateMateria
+    usecase "Editar Materia" as UC_EditMateria
+    usecase "Activar / Desactivar Materia" as UC_ToggleMateria
+    usecase "Eliminar Materia" as UC_DeleteMateria
+    usecase "Consultar / Filtrar Materias" as UC_ListMaterias
+  }
+
+  package "Módulo de Sesiones de Estudio" {
+    usecase "Asignar / Programar Sesión" as UC_CreateSesion
+    usecase "Modificar Fecha, Horario, Objetivo o Estado de Sesión" as UC_EditSesion
+    usecase "Eliminar Sesión de Estudio" as UC_DeleteSesion
+    usecase "Consultar / Filtrar Sesiones" as UC_ListSesiones
+  }
+
+  package "Módulo de Perfil" {
+    usecase "Ver / Editar Mi Perfil" as UC_Perfil
+  }
+}
+
+
+' Relaciones Administrador
+Admin --> UC_Login
+Admin --> UC_Logout
+Admin --> UC_Perfil
+
+Admin --> UC_CreateUser
+Admin --> UC_EditUser
+Admin --> UC_ToggleUser
+Admin --> UC_DeleteUser
+Admin --> UC_ListUsers
+
+Admin --> UC_CreateMateria
+Admin --> UC_EditMateria
+Admin --> UC_ToggleMateria
+Admin --> UC_DeleteMateria
+Admin --> UC_ListMaterias
+
+Admin --> UC_CreateSesion
+Admin --> UC_EditSesion
+Admin --> UC_DeleteSesion
+Admin --> UC_ListSesiones
+
+' Relaciones Estudiante
+Estudiante --> UC_Register
+Estudiante --> UC_Login
+Estudiante --> UC_Logout
+Estudiante --> UC_Perfil
+
+Estudiante --> UC_ListUsers
+Estudiante --> UC_ListMaterias
+Estudiante --> UC_ListSesiones
+Estudiante --> UC_EditSesion
+
+note right of UC_CreateSesion
+  Únicamente el Administrador puede crear y asignar
+  sesiones de estudio vinculando estudiante y materia.
+end note
+
+note right of UC_EditSesion
+  El Estudiante asignado puede alterar la fecha,
+  hora inicio/fin, objetivo y estado de sus sesiones.
+end note
+
+@enduml

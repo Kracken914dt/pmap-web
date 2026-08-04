@@ -1,0 +1,87 @@
+@startuml diagrama-componentes
+skinparam componentStyle uml2
+skinparam packageStyle frame
+skinparam shadowing false
+
+title Diagrama de Componentes – PMAP (Arquitectura Multicapa)
+
+package "Capa de Presentación (Frontend - React + Vite)" {
+  [AppRouter & ProtectedRoute] as Router
+  [Páginas (Usuarios, Sesiones, Materias, Perfil, Login)] as Pages
+  [Componentes UI (Navbar, Sidebar, Modales, Tablas)] as UI
+  [Cliente HTTP (Axios / Interceptor JWT)] as HttpClient
+  [Storage Manager (localStorage)] as Storage
+
+  Pages --> Router
+  Pages --> UI
+  Pages --> HttpClient
+  Pages --> Storage
+  HttpClient --> Storage : lee token JWT
+}
+
+package "Capa de Aplicación / Backend (Spring Boot REST API)" {
+
+  package "Seguridad & Filtros" {
+    [SecurityConfig / CORS] as SecConfig
+    [JwtAuthenticationFilter] as JwtFilter
+    [JwtService] as JwtService
+    [CustomUserDetailsService] as UserDetails
+
+    JwtFilter --> JwtService : valida token
+    JwtFilter --> UserDetails : carga autoridades (ROLE_*)
+  }
+
+  package "Controladores REST (API Layer)" {
+    [AuthController] as AuthCtrl
+    [UsuarioController] as UserCtrl
+    [MateriaController] as MatCtrl
+    [SesionEstudioController] as SesCtrl
+  }
+
+  package "Capa de Servicios (Business Logic Layer)" {
+    [AuthService] as AuthSvc
+    [UsuarioService] as UserSvc
+    [MateriaService] as MatSvc
+    [SesionEstudioService] as SesSvc
+  }
+
+  package "Capa de Persistencia (Data Access Layer)" {
+    [UsuarioRepository] as UserRepo
+    [MateriaRepository] as MatRepo
+    [SesionEstudioRepository] as SesRepo
+    [MapStruct / Mappers] as Mappers
+  }
+
+  ' Conexiones internas backend
+  AuthCtrl --> AuthSvc
+  UserCtrl --> UserSvc
+  MatCtrl --> MatSvc
+  SesCtrl --> SesSvc
+
+  AuthSvc --> UserRepo
+  UserSvc --> UserRepo
+  MatSvc --> MatRepo
+  SesSvc --> SesRepo
+  SesSvc --> UserRepo
+  SesSvc --> MatRepo
+
+  UserSvc ..> Mappers
+  MatSvc ..> Mappers
+  SesSvc ..> Mappers
+}
+
+database "Base de Datos Relacional" {
+  [PostgreSQL (Tablas: usuarios, materias, sesiones_estudio)] as Database
+}
+
+' Conexiones entre componentes principales
+HttpClient --> AuthCtrl : HTTP POST /api/auth/* (JSON)
+HttpClient --> UserCtrl : HTTP GET/POST/PUT/DELETE /api/usuarios (Bearer JWT)
+HttpClient --> MatCtrl : HTTP GET/POST/PUT/DELETE /api/materias (Bearer JWT)
+HttpClient --> SesCtrl : HTTP GET/POST/PUT/DELETE /api/sesiones (Bearer JWT)
+
+UserRepo --> Database : JDBC / JPA / Hibernate
+MatRepo --> Database : JDBC / JPA / Hibernate
+SesRepo --> Database : JDBC / JPA / Hibernate
+
+@endluml

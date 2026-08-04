@@ -1,0 +1,64 @@
+@startuml diagrama-despliegue
+skinparam nodeStyle rectangle
+skinparam componentStyle uml2
+skinparam shadowing false
+
+title Diagrama de Despliegue – PMAP (Vercel + Render + Supabase)
+
+actor "Cliente (Navegador Web / Dispositivo)" as Client
+
+node "Vercel Platform (Frontend Cloud Hosting)" <<Cloud>> {
+  node "Edge CDN / Static Server" {
+    artifact "PMAP Single Page Application (SPA)" as SPA {
+      component "React 18 + Vite Bundle"
+      component "HTML5 / Tailwind CSS / JS"
+    }
+  }
+}
+
+node "Render Cloud Platform (Backend Hosting)" <<Cloud Container Service>> {
+  node "Render Web Service Container" as RenderContainer {
+    node "Docker Runtime (linux/amd64)" {
+      artifact "pmap-backend.jar" as BackendApp {
+        component "Spring Boot 3.3.5"
+        component "Embedded Tomcat (Puerto 8080)"
+        component "Spring Security (JWT)"
+      }
+    }
+  }
+}
+
+node "Supabase Cloud Platform (Database Hosting)" <<Managed DB Cloud>> {
+  database "Supabase PostgreSQL Database" as SupabaseDB {
+    folder "Esquema: public (pmap_db)" {
+      [Tabla: usuarios]
+      [Tabla: materias]
+      [Tabla: sesiones_estudio]
+    }
+  }
+}
+
+node "GitHub & DockerHub (CI/CD Pipeline)" <<DevOps Services>> {
+  node "GitHub Repository" {
+    component "GitHub Actions Workflow (.github/workflows/docker-images.yml)" as GHA
+  }
+  node "DockerHub Registry" as DockerHub {
+    artifact "docker.io/${DOCKERHUB_USERNAME}/pmap-backend:latest" as BackendImage
+    artifact "docker.io/${DOCKERHUB_USERNAME}/pmap-frontend:latest" as FrontendImage
+  }
+}
+
+' Conexiones del Cliente
+Client --> SPA : 1. Petición HTTPS (HTML/JS/CSS)\nhttps://pmap-web.vercel.app
+
+' Conexiones Frontend - Backend
+SPA --> BackendApp : 2. Peticiones REST API (JSON / Bearer JWT)\nhttps://pmap-backend.onrender.com/api
+
+' Conexiones Backend - Base de Datos
+BackendApp --> SupabaseDB : 3. Conexión JDBC sobre TLS (Puerto 5432 / 6543)\njdbc:postgresql://aws-0-us-east-1.pooler.supabase.com:5432/postgres
+
+' Conexiones CI/CD
+GHA --> DockerHub : Build and Push Docker Images
+DockerHub --> RenderContainer : Deploy automático desde DockerHub
+
+@enduml

@@ -1,0 +1,309 @@
+@startuml diagrama-clases
+skinparam classAttributeIconSize 0
+skinparam classFontSize 13
+skinparam packageFontSize 14
+skinparam linetype ortho
+skinparam nodesep 60
+skinparam ranksep 50
+
+title Diagrama de Clases – PMAP (Plataforma de Monitoreo Académico Personalizado)
+
+' ──────────────────────────── ENUMS ────────────────────────────
+
+package "entity (enums)" #EEEEFF {
+
+  enum Role {
+    ADMINISTRADOR
+    ESTUDIANTE
+  }
+
+  enum EstadoUsuario {
+    ACTIVO
+    INACTIVO
+  }
+
+  enum EstadoMateria {
+    ACTIVA
+    INACTIVA
+  }
+
+  enum EstadoSesionEstudio {
+    PENDIENTE
+    EN_PROGRESO
+    FINALIZADA
+    CANCELADA
+  }
+}
+
+' ──────────────────────────── ENTITIES ────────────────────────────
+
+package "entity" #DDFFDD {
+
+  class Usuario {
+    - id : Long
+    - nombres : String
+    - apellidos : String
+    - correo : String
+    - contraseña : String
+    - rol : Role
+    - estado : EstadoUsuario
+    - fechaRegistro : LocalDateTime
+  }
+
+  class Materia {
+    - id : Long
+    - nombre : String
+    - descripcion : String
+    - categoria : String
+    - estado : EstadoMateria
+    - fechaCreacion : LocalDateTime
+  }
+
+  class SesionEstudio {
+    - id : Long
+    - fecha : LocalDate
+    - horaInicio : LocalTime
+    - horaFin : LocalTime
+    - objetivo : String
+    - estado : EstadoSesionEstudio
+  }
+}
+
+' ──────────────────────────── RELATIONSHIPS ────────────────────────────
+
+Usuario "1" o-- "0..*" SesionEstudio : sesiones >
+Materia "1" o-- "0..*" SesionEstudio : sesiones >
+Usuario --> Role : rol
+Usuario --> EstadoUsuario : estado
+Materia --> EstadoMateria : estado
+SesionEstudio --> EstadoSesionEstudio : estado
+SesionEstudio --> Usuario : usuario
+SesionEstudio --> Materia : materia
+
+' ──────────────────────────── DTOs ────────────────────────────
+
+package "dto" #FFFFDD {
+
+  package "auth" {
+    class LoginRequest <<record>> {
+      + correo : String
+      + contraseña : String
+    }
+    class RegisterRequest <<record>> {
+      + nombres : String
+      + apellidos : String
+      + correo : String
+      + contraseña : String
+    }
+    class AuthResponse <<record>> {
+      + token : String
+      + usuario : UsuarioResponse
+    }
+  }
+
+  package "usuario" {
+    class UsuarioCreateRequest <<record>> {
+      + nombres : String
+      + apellidos : String
+      + correo : String
+      + contraseña : String
+      + rol : Role
+    }
+    class UsuarioUpdateRequest <<record>> {
+      + nombres : String
+      + apellidos : String
+      + correo : String
+      + contraseña : String
+      + rol : Role
+      + estado : EstadoUsuario
+    }
+    class UsuarioResponse <<record>> {
+      + id : Long
+      + nombres : String
+      + apellidos : String
+      + correo : String
+      + rol : Role
+      + estado : EstadoUsuario
+      + fechaRegistro : LocalDateTime
+    }
+  }
+
+  package "materia" {
+    class MateriaCreateRequest <<record>> {
+      + nombre : String
+      + descripcion : String
+      + categoria : String
+    }
+    class MateriaUpdateRequest <<record>> {
+      + nombre : String
+      + descripcion : String
+      + categoria : String
+      + estado : EstadoMateria
+    }
+    class MateriaResponse <<record>> {
+      + id : Long
+      + nombre : String
+      + descripcion : String
+      + categoria : String
+      + estado : EstadoMateria
+      + fechaCreacion : LocalDateTime
+    }
+  }
+
+  package "sesion" {
+    class SesionEstudioCreateRequest <<record>> {
+      + usuarioId : Long
+      + materiaId : Long
+      + fecha : LocalDate
+      + horaInicio : LocalTime
+      + horaFin : LocalTime
+      + objetivo : String
+      + estado : EstadoSesionEstudio
+    }
+    class SesionEstudioUpdateRequest <<record>> {
+      + usuarioId : Long
+      + materiaId : Long
+      + fecha : LocalDate
+      + horaInicio : LocalTime
+      + horaFin : LocalTime
+      + objetivo : String
+      + estado : EstadoSesionEstudio
+    }
+    class SesionEstudioResponse <<record>> {
+      + id : Long
+      + usuario : UsuarioResponse
+      + materia : MateriaResponse
+      + fecha : LocalDate
+      + horaInicio : LocalTime
+      + horaFin : LocalTime
+      + objetivo : String
+      + estado : EstadoSesionEstudio
+    }
+  }
+}
+
+' ──────────────────────────── SERVICES ────────────────────────────
+
+package "service" #FFDDDD {
+
+  interface AuthService {
+    + register(req : RegisterRequest) : AuthResponse
+    + login(req : LoginRequest) : AuthResponse
+  }
+
+  interface UsuarioService {
+    + create(req : UsuarioCreateRequest) : UsuarioResponse
+    + update(id, req : UsuarioUpdateRequest) : UsuarioResponse
+    + findById(id) : UsuarioResponse
+    + findAll() : List<UsuarioResponse>
+    + search(query) : List<UsuarioResponse>
+    + activate(id) : void
+    + deactivate(id) : void
+    + delete(id) : void
+  }
+
+  interface MateriaService {
+    + create(req : MateriaCreateRequest) : MateriaResponse
+    + update(id, req : MateriaUpdateRequest) : MateriaResponse
+    + findById(id) : MateriaResponse
+    + findAll() : List<MateriaResponse>
+    + search(nombre) : List<MateriaResponse>
+    + filterByCategory(cat) : List<MateriaResponse>
+    + activate(id) : void
+    + deactivate(id) : void
+    + delete(id) : void
+  }
+
+  interface SesionEstudioService {
+    + create(req : SesionEstudioCreateRequest) : SesionEstudioResponse
+    + update(id, req : SesionEstudioUpdateRequest) : SesionEstudioResponse
+    + findById(id) : SesionEstudioResponse
+    + findAll() : List<SesionEstudioResponse>
+    + findByUsuario(usuarioId) : List<SesionEstudioResponse>
+    + findByMateria(materiaId) : List<SesionEstudioResponse>
+    + filterByEstado(estado) : List<SesionEstudioResponse>
+    + delete(id) : void
+  }
+
+  class AuthServiceImpl implements AuthService
+  class UsuarioServiceImpl implements UsuarioService
+  class MateriaServiceImpl implements MateriaService
+  class SesionEstudioServiceImpl implements SesionEstudioService
+}
+
+' ──────────────────────────── REPOSITORIES ────────────────────────────
+
+package "repository" #DDDDFF {
+  interface UsuarioRepository <<JpaRepository>>
+  interface MateriaRepository <<JpaRepository>>
+  interface SesionEstudioRepository <<JpaRepository>>
+}
+
+' ──────────────────────────── CONTROLLERS ────────────────────────────
+
+package "controller" #FFDDCC {
+  class AuthController {
+    + register(req) : ResponseEntity
+    + login(req) : ResponseEntity
+  }
+  class UsuarioController {
+    + create(req) : ResponseEntity
+    + update(id, req) : ResponseEntity
+    + findById(id) : ResponseEntity
+    + findAll(search) : ResponseEntity
+    + activate(id) : ResponseEntity
+    + deactivate(id) : ResponseEntity
+    + delete(id) : ResponseEntity
+  }
+  class MateriaController {
+    + create(req) : ResponseEntity
+    + update(id, req) : ResponseEntity
+    + findById(id) : ResponseEntity
+    + findAll(nombre, cat) : ResponseEntity
+    + activate(id) : ResponseEntity
+    + deactivate(id) : ResponseEntity
+    + delete(id) : ResponseEntity
+  }
+  class SesionEstudioController {
+    + create(req) : ResponseEntity
+    + update(id, req) : ResponseEntity
+    + findById(id) : ResponseEntity
+    + findAll(usuarioId, materiaId, estado) : ResponseEntity
+    + delete(id) : ResponseEntity
+  }
+}
+
+' ──────────────────────────── SECURITY ────────────────────────────
+
+package "security" #FFE0E0 {
+  class JwtService {
+    + generateToken(userDetails) : String
+    + extractUsername(token) : String
+    + isTokenValid(token, userDetails) : boolean
+  }
+  class JwtAuthenticationFilter {
+    + doFilterInternal(req, res, chain) : void
+  }
+  class CustomUserDetailsService {
+    + loadUserByUsername(username) : UserDetails
+  }
+}
+
+' ──────────────────────────── DEPENDENCIES ────────────────────────────
+
+AuthController --> AuthService
+UsuarioController --> UsuarioService
+MateriaController --> MateriaService
+SesionEstudioController --> SesionEstudioService
+
+AuthServiceImpl --> UsuarioRepository
+UsuarioServiceImpl --> UsuarioRepository
+MateriaServiceImpl --> MateriaRepository
+SesionEstudioServiceImpl --> SesionEstudioRepository
+SesionEstudioServiceImpl --> UsuarioRepository
+SesionEstudioServiceImpl --> MateriaRepository
+
+CustomUserDetailsService --> UsuarioRepository
+JwtAuthenticationFilter --> JwtService
+
+@enduml
